@@ -5,28 +5,29 @@ import com.hazelcast.core.*;
 import java.io.*;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.ExecutionException;
+
 import com.hazelcast.mapreduce.*;
 
+@SuppressWarnings("ALL")
 public class TripsBetweenStationsQuery {
-
-    //TODO may extend from abstract class for all 3 queries
-    private final HazelcastInstance hazelcast;
-    private final IMap<String, Integer> stationTripsMap;
+    private HazelcastInstance hazelcast;
+    private IMap<String, Integer> stationTripsMap;
 
     public TripsBetweenStationsQuery(HazelcastInstance hazelcastInstance, IMap<String, Integer> stationTripsMap) {
         this.hazelcast = hazelcastInstance;
         this.stationTripsMap = stationTripsMap;
     }
 
-    public void execute(Map<String, String> stations, String outPath) {
-        executeMapReduceQuery(stations);
+    public void execute(String stationsMapName, String outPath) throws ExecutionException, InterruptedException {
+        executeMapReduceQuery(stationsMapName);
         List<String> results = generateTripResults();
         saveResultsToFile(results, outPath);
     }
 
-    private void executeMapReduceQuery(Map<String, String> stations) {
+    private void executeMapReduceQuery(String stationsMapName) throws ExecutionException, InterruptedException {
         JobTracker jobTracker = hazelcast.getJobTracker("tripQueryTracker");
-        KeyValueSource<String, String> source = KeyValueSource.fromMap(stations);
+        KeyValueSource<String, String> source = KeyValueSource.fromMap(hazelcast.getMap(stationsMapName));
 
         Job<String, String> job = jobTracker.newJob(source);
 
@@ -43,7 +44,7 @@ public class TripsBetweenStationsQuery {
 
         job.reducer((ReducerFactory<String, Integer, Integer>) Reducers.integerSumReducerFactory());
 
-        ICompletableFuture<List<Map.Entry<String, Integer>>> future = job.submit();
+        ICompletableFuture<List<Map.Entry<String, Integer>> future = job.submit();
 
         List<Map.Entry<String, Integer>> results = future.get();
 
