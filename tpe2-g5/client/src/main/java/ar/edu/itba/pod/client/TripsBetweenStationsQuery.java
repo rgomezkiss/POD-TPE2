@@ -8,8 +8,10 @@ import java.util.Map.Entry;
 import com.hazelcast.mapreduce.*;
 
 public class TripsBetweenStationsQuery {
-    private HazelcastInstance hazelcast;
-    private IMap<String, Integer> stationTripsMap;
+
+    //TODO may extend from abstract class for all 3 queries
+    private final HazelcastInstance hazelcast;
+    private final IMap<String, Integer> stationTripsMap;
 
     public TripsBetweenStationsQuery(HazelcastInstance hazelcastInstance, IMap<String, Integer> stationTripsMap) {
         this.hazelcast = hazelcastInstance;
