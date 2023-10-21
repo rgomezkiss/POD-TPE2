@@ -7,40 +7,34 @@ import com.hazelcast.config.*;
 import com.hazelcast.core.Hazelcast;
 
 import java.io.IOException;
+import java.lang.invoke.MutableCallSite;
 import java.util.Collections;
 
 public class Server {
     private static Logger logger = LoggerFactory.getLogger(Server.class);
 
     public static void main(String[] args) {
-
-        // Config
+        logger.info("Server Starting ...");
         Config config = new Config();
 
-        // Group config
-        GroupConfig groupConfig = new GroupConfig().setName("g3").setPassword("g3-pass");
+        GroupConfig groupConfig = new GroupConfig().setName("g5").setPassword("g5-pass");
         config.setGroupConfig(groupConfig);
 
-        // Network config
         MulticastConfig multicastConfig = new MulticastConfig();
 
-        JoinConfig joinConfig = new JoinConfig()
-                .setMulticastConfig(multicastConfig);
+        JoinConfig joinConfig = new JoinConfig().setMulticastConfig(multicastConfig);
+
         InterfacesConfig interfacesConfig = new InterfacesConfig()
-                .setInterfaces(Collections.singletonList("127.0.0.*"))
-                .setEnabled(true);
-        NetworkConfig networkConfig = new NetworkConfig()
-                .setInterfaces(interfacesConfig)
-                .setJoin(joinConfig);
+                .setInterfaces(Collections.singletonList("192.168.1.*")).setEnabled(true);
+
+        NetworkConfig networkConfig = new NetworkConfig().setInterfaces(interfacesConfig).setJoin(joinConfig);
         config.setNetworkConfig(networkConfig);
 
-        // Management Center Config
-//        ManagementCenterConfig managementCenterConfig = new ManagementCenterConfig()
-//                .setUrl("http://localhost:8081/mancenter/")
-//                .setEnabled(true);
-//        config.setManagementCenterConfig(managementCenterConfig);
+        ManagementCenterConfig managementCenterConfig = new ManagementCenterConfig()
+                .setUrl("http://localhost:8080/mancenter/")
+                .setEnabled(true);
+        config.setManagementCenterConfig(managementCenterConfig);
 
-        // Start cluster
         Hazelcast.newHazelcastInstance(config);
     }
 }
