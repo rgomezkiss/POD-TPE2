@@ -7,7 +7,6 @@ import com.hazelcast.mapreduce.ReducerFactory;
 
 @SuppressWarnings("deprecation")
 public class TripsBetweenStationsReducerFactory implements ReducerFactory<Pair<Integer, Integer>, Integer, Integer>{
-
     @Override
     public Reducer<Integer, Integer> newReducer(Pair<Integer, Integer> pair) {
         return new QueryReducer();

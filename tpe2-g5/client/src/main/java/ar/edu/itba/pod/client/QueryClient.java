@@ -4,10 +4,14 @@ import ar.edu.itba.pod.client.utils.DataLoader;
 import ar.edu.itba.pod.client.utils.QueryParams;
 import ar.edu.itba.pod.client.utils.QueryParser;
 import ar.edu.itba.pod.client.utils.ResultWriter;
+import ar.edu.itba.pod.collators.LongestTripCollator;
 import ar.edu.itba.pod.collators.TripsBetweenStationsCollator;
+import ar.edu.itba.pod.mappers.LongestTripMapper;
 import ar.edu.itba.pod.mappers.TripsBetweenStationsMapper;
+import ar.edu.itba.pod.models.Pair;
 import ar.edu.itba.pod.models.Station;
 import ar.edu.itba.pod.models.Trip;
+import ar.edu.itba.pod.reducers.LongestTripReducerFactory;
 import ar.edu.itba.pod.reducers.TripsBetweenStationsReducerFactory;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
@@ -19,6 +23,7 @@ import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -54,16 +59,26 @@ public class QueryClient {
                     List<Map.Entry<String, Integer>> result = job
                             .mapper(new TripsBetweenStationsMapper(stationMap))
                             .reducer(new TripsBetweenStationsReducerFactory())
-                            .submit(new TripsBetweenStationsCollator())
+                            .submit(new TripsBetweenStationsCollator(stationMap))
                             .get();
 
-                    ResultWriter.writeResult(params.getOutPath(), result);
+//                    ResultWriter.writeResult(params.getOutPath(), "station_a;station_b;trips_between_a_b", result);
                 }
 
                 case 2 -> {
                 }
 
                 case 3 -> {
+                    KeyValueSource<String, Trip> keyValueSource = KeyValueSource.fromList(tripIList);
+                    Job<String, Trip> job = hazelcastInstance.getJobTracker("query1-g5").newJob(keyValueSource);
+
+                    List<Map.Entry<String, Pair<LocalDateTime, Integer>>> result = job
+                            .mapper(new LongestTripMapper(stationMap))
+                            .reducer(new LongestTripReducerFactory())
+                            .submit(new LongestTripCollator(stationMap))
+                            .get();
+
+//                    ResultWriter.writeResult(params.getOutPath(), "start_station;end_station;start_date;minutes\n", result);
                 }
 
                 case 4 -> {

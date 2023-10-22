@@ -5,6 +5,7 @@ import com.hazelcast.nio.ObjectDataOutput;
 import com.hazelcast.nio.serialization.DataSerializable;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -49,6 +50,9 @@ public class Trip implements DataSerializable {
         return isMember;
     }
 
+    public Integer getTripLength() {
+        return Math.toIntExact(Duration.between(startDate, endDate).toMinutes());
+    }
 
     @Override
     public int hashCode(){

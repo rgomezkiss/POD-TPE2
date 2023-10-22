@@ -25,15 +25,18 @@ public class Server {
         JoinConfig joinConfig = new JoinConfig().setMulticastConfig(multicastConfig);
 
         InterfacesConfig interfacesConfig = new InterfacesConfig()
-                .setInterfaces(Collections.singletonList("192.168.1.*")).setEnabled(true);
+                .setInterfaces(Collections.singletonList("192.168.1.*"))
+                .setEnabled(false);
 
-        NetworkConfig networkConfig = new NetworkConfig().setInterfaces(interfacesConfig).setJoin(joinConfig);
+        NetworkConfig networkConfig = new NetworkConfig()
+                .setInterfaces(interfacesConfig)
+                .setJoin(joinConfig);
         config.setNetworkConfig(networkConfig);
 
-        ManagementCenterConfig managementCenterConfig = new ManagementCenterConfig()
-                .setUrl("http://localhost:8080/mancenter/")
-                .setEnabled(true);
-        config.setManagementCenterConfig(managementCenterConfig);
+//        ManagementCenterConfig managementCenterConfig = new ManagementCenterConfig()
+//                .setUrl("http://localhost:8080/mancenter/")
+//                .setEnabled(true);
+//        config.setManagementCenterConfig(managementCenterConfig);
 
         Hazelcast.newHazelcastInstance(config);
     }

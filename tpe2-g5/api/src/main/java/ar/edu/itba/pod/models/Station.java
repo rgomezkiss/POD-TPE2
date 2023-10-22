@@ -39,7 +39,6 @@ public class Station implements DataSerializable {
         return longitude;
     }
 
-
     @Override
     public int hashCode(){
         return Objects.hash(pk);

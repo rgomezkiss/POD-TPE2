@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 public class ResultWriter<K,V> {
-
-    public static void writeResult(String outPath, List<Map.Entry<String, Integer>> results) {
+    //TODO: fix generic
+    public void writeResult(String outPath, String header, List<Map.Entry<K, V>> results) {
         try (PrintWriter writer = new PrintWriter(outPath)) {
-            writer.println("station_a;station_b;trips_between_a_b");
+            writer.println(header);
             results.forEach(writer::println);
         } catch (IOException e) {
             e.printStackTrace();
