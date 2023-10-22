@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -22,7 +24,7 @@ public class QueryParser implements Parser<QueryParams> {
     private final static String N = "Dn";
     private final static String QUERY = "Dquery";
 
-    private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+    private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 
     public QueryParser() {
@@ -35,14 +37,14 @@ public class QueryParser implements Parser<QueryParams> {
         options.addOption(QUERY, QUERY, true, "Query requested");
     }
 
-    // -DserverAddress=xx.xx.xx.xx:yyyy -Daction=actionName [ -DinPath=filename | -Dride=rideName | -Dday=dayOfYear | -Dcapacity=amount ]
+    // -Daddresses='xx.xx.xx.xx:XXXX;yy.yy.yy.yy:YYYY' -DinPath=XX -DoutPath=YY -Dn=n -DstartDate=... -DendDate=... -Dquery=x
     @Override
     public QueryParams parse(String[] args) {
         try {
             final CommandLine cmd = parser.parse(options, args);
 
-            //TODO: check how to do multiple
-            final String[] addresses = null;
+            String[] addressArray = cmd.getOptionValue(SERVER_ADDRESSES).split(";");
+            List<String> addresses = new ArrayList<>(Arrays.asList(addressArray));
 
             String inPath = cmd.getOptionValue(IN_PATH);
             String outPath = cmd.getOptionValue(OUT_PATH);

@@ -6,17 +6,18 @@ import com.hazelcast.nio.serialization.DataSerializable;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Trip implements DataSerializable {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
 
-    private Station startStation;
-    private Station endStation;
+    private int startStation;
+    private int endStation;
 
     private int isMember;
 
-    public Trip(LocalDateTime startDate, LocalDateTime endDate, Station startStation, Station endStation, int isMember) {
+    public Trip(LocalDateTime startDate, LocalDateTime endDate, int startStation, int endStation, int isMember) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.startStation = startStation;
@@ -36,11 +37,11 @@ public class Trip implements DataSerializable {
         return endDate;
     }
 
-    public Station getStartStation() {
+    public int getStartStation() {
         return startStation;
     }
 
-    public Station getEndStation() {
+    public int getEndStation() {
         return endStation;
     }
 
@@ -48,12 +49,27 @@ public class Trip implements DataSerializable {
         return isMember;
     }
 
+
+    @Override
+    public int hashCode(){
+
+        return Objects.hash(startDate, endDate, startStation, endStation);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Trip trip)) {
+            return false;
+        }
+        return this.startDate.equals(trip.startDate) && this.endDate.equals(trip.endDate) && this.startStation == trip.startStation && this.endStation == trip.endStation;
+    }
     @Override
     public void writeData(ObjectDataOutput out) throws IOException {
         out.writeObject(startDate);
         out.writeObject(endDate);
-        startStation.writeData(out);
-        endStation.writeData(out);
+        out.writeInt(startStation);
+        out.writeInt(endStation);
         out.writeInt(isMember);
     }
 
@@ -61,10 +77,8 @@ public class Trip implements DataSerializable {
     public void readData(ObjectDataInput in) throws IOException {
         startDate = in.readObject();
         endDate = in.readObject();
-        startStation = new Station();
-        startStation.readData(in);
-        endStation = new Station();
-        endStation.readData(in);
+        startStation = in.readInt();
+        endStation = in.readInt();
         isMember = in.readInt();
     }
 }

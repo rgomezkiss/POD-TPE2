@@ -5,6 +5,7 @@ import com.hazelcast.nio.ObjectDataOutput;
 import com.hazelcast.nio.serialization.DataSerializable;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class Station implements DataSerializable {
     private int pk;
@@ -36,6 +37,21 @@ public class Station implements DataSerializable {
 
     public double getLongitude() {
         return longitude;
+    }
+
+
+    @Override
+    public int hashCode(){
+        return Objects.hash(pk);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Station station)) {
+            return false;
+        }
+        return this.pk == station.pk;
     }
 
     @Override

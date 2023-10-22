@@ -1,11 +1,10 @@
 package ar.edu.itba.pod.client.utils;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 public class QueryParams {
-    private final String[] addresses;
+    private final List<String> addresses;
     private final String inPath;
     private final String outPath;
     private final LocalDateTime startDate;
@@ -13,7 +12,7 @@ public class QueryParams {
     private final int N;
     private final int query;
 
-    public QueryParams(String[] addresses, String inPath, String outPath, int query) {
+    public QueryParams(List<String> addresses, String inPath, String outPath, int query) {
         this.addresses = addresses;
         this.inPath = inPath;
         this.outPath = outPath;
@@ -23,7 +22,7 @@ public class QueryParams {
         this.query = query;
     }
 
-    public QueryParams(String[] addresses, String inPath, String outPath, LocalDateTime startDate, LocalDateTime endDate, int query) {
+    public QueryParams(List<String> addresses, String inPath, String outPath, LocalDateTime startDate, LocalDateTime endDate, int query) {
         this.addresses = addresses;
         this.inPath = inPath;
         this.outPath = outPath;
@@ -33,7 +32,7 @@ public class QueryParams {
         this.query = query;
     }
 
-    public QueryParams(String[] addresses, String inPath, String outPath, int N, int query) {
+    public QueryParams(List<String> addresses, String inPath, String outPath, int N, int query) {
         this.addresses = addresses;
         this.inPath = inPath;
         this.outPath = outPath;
@@ -43,7 +42,7 @@ public class QueryParams {
         this.query = query;
     }
 
-    public String[] getServerAddresses() {
+    public List<String> getServerAddresses() {
         return addresses;
     }
     public String getInPath() {
