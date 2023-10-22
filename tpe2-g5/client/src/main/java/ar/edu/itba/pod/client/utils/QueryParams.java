@@ -51,19 +51,15 @@ public class QueryParams {
     public String getOutPath() {
         return outPath;
     }
-
     public LocalDateTime getStartDate() {
         return startDate;
     }
-
     public LocalDateTime getEndDate() {
         return endDate;
     }
-
     public int getN() {
         return N;
     }
-
     public int getQuery() {
         return query;
     }

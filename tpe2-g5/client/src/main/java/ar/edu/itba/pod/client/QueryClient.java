@@ -3,7 +3,6 @@ package ar.edu.itba.pod.client;
 import ar.edu.itba.pod.client.utils.DataLoader;
 import ar.edu.itba.pod.client.utils.QueryParams;
 import ar.edu.itba.pod.client.utils.QueryParser;
-import ar.edu.itba.pod.client.utils.ResultWriter;
 import ar.edu.itba.pod.collators.LongestTripCollator;
 import ar.edu.itba.pod.collators.TripsBetweenStationsCollator;
 import ar.edu.itba.pod.mappers.LongestTripMapper;
@@ -29,34 +28,40 @@ import java.util.Map;
 
 @SuppressWarnings("deprecation")
 public class QueryClient {
-    private static Logger logger = LoggerFactory.getLogger(QueryClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(QueryClient.class);
+    private static final String HZ_CLIENT_NAME = "g5";
+    private static final String HZ_CLIENT_PASS = "g5-pass";
+    private static final String BIKES_LIST = "g5-bikes-list";
+    private static final String QUERY1 = "query1-g5";
+    private static final String QUERY2 = "query2-g5";
+    private static final String QUERY3 = "query3-g5";
+    private static final String QUERY4 = "query4-g5";
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         logger.info("Client Starting ...");
-
         logger.info("Argument Parsing ...");
-        QueryParams params = new QueryParser().parse(args);
+
+        final QueryParams params = new QueryParser().parse(args);
+
         logger.info("Finished Argument Parsing");
 
-        HazelcastInstance hazelcastInstance = getHazelClientInstance(params.getServerAddresses());
+        final HazelcastInstance hazelcastInstance = getHazelClientInstance(params.getServerAddresses());
 
         logger.info("Data Parsing ...");
 
-        Map<Integer, Station> stationMap = DataLoader.readStations(params.getInPath());
-
-        IList<Trip> tripIList = hazelcastInstance.getList("g5-bikes-list");
+        final Map<Integer, Station> stationMap = DataLoader.readStations(params.getInPath());
+        final IList<Trip> tripIList = hazelcastInstance.getList(BIKES_LIST);
         DataLoader.readBikes(params.getInPath(), tripIList);
 
         logger.info("Finished Data Parsing");
 
-
         try {
             switch(params.getQuery()) {
                 case 1 -> {
-                    KeyValueSource<String, Trip> keyValueSource = KeyValueSource.fromList(tripIList);
-                    Job<String, Trip> job = hazelcastInstance.getJobTracker("query1-g5").newJob(keyValueSource);
+                    final KeyValueSource<String, Trip> keyValueSource = KeyValueSource.fromList(tripIList);
+                    final Job<String, Trip> job = hazelcastInstance.getJobTracker(QUERY1).newJob(keyValueSource);
 
-                    List<Map.Entry<String, Integer>> result = job
+                    final List<Map.Entry<String, Integer>> result = job
                             .mapper(new TripsBetweenStationsMapper(stationMap))
                             .reducer(new TripsBetweenStationsReducerFactory())
                             .submit(new TripsBetweenStationsCollator(stationMap))
@@ -69,10 +74,10 @@ public class QueryClient {
                 }
 
                 case 3 -> {
-                    KeyValueSource<String, Trip> keyValueSource = KeyValueSource.fromList(tripIList);
-                    Job<String, Trip> job = hazelcastInstance.getJobTracker("query1-g5").newJob(keyValueSource);
+                    final KeyValueSource<String, Trip> keyValueSource = KeyValueSource.fromList(tripIList);
+                    final Job<String, Trip> job = hazelcastInstance.getJobTracker(QUERY3).newJob(keyValueSource);
 
-                    List<Map.Entry<String, Pair<LocalDateTime, Integer>>> result = job
+                    final List<Map.Entry<String, Pair<LocalDateTime, Integer>>> result = job
                             .mapper(new LongestTripMapper(stationMap))
                             .reducer(new LongestTripReducerFactory())
                             .submit(new LongestTripCollator(stationMap))
@@ -89,16 +94,13 @@ public class QueryClient {
         }
     }
 
-    private static HazelcastInstance getHazelClientInstance(List<String> addresses) {
-        String name = "g5";
-        String pass = "g5-pass";
+    private static HazelcastInstance getHazelClientInstance(final List<String> addresses) {
+        final ClientConfig clientConfig = new ClientConfig();
 
-        ClientConfig clientConfig = new ClientConfig();
-
-        GroupConfig groupConfig = new GroupConfig().setName(name).setPassword(pass);
+        final GroupConfig groupConfig = new GroupConfig().setName(HZ_CLIENT_NAME).setPassword(HZ_CLIENT_PASS);
         clientConfig.setGroupConfig(groupConfig);
 
-        ClientNetworkConfig clientNetworkConfig = new ClientNetworkConfig().setAddresses(addresses);
+        final ClientNetworkConfig clientNetworkConfig = new ClientNetworkConfig().setAddresses(addresses);
         clientConfig.setNetworkConfig(clientNetworkConfig);
 
         return HazelcastClient.newHazelcastClient(clientConfig);

@@ -10,31 +10,33 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("deprecation")
-public class TripsBetweenStationsCollator implements Collator<Map.Entry<Pair<Integer, Integer>, Integer>, List<Map.Entry<String, Integer>>> {
-    private Map<Integer, Station> stations;
+public class TripsBetweenStationsCollator implements Collator<
+        Map.Entry<Pair<Integer, Integer>, Integer>,
+        List<Map.Entry<String, Integer>>> {
+    private final Map<Integer, Station> stations;
 
     public TripsBetweenStationsCollator(Map<Integer, Station> stations) {
         this.stations = stations;
     }
 
     @Override
-    public List<Map.Entry<String, Integer>> collate(Iterable<Map.Entry<Pair<Integer, Integer>, Integer>> iterable){
-        Map<String, Integer> tripsCount = new HashMap<>();
+    public List<Map.Entry<String, Integer>> collate(Iterable<Map.Entry<Pair<Integer, Integer>, Integer>> iterable) {
+        final Map<String, Integer> tripsCount = new HashMap<>();
 
         for (Map.Entry<Pair<Integer, Integer>, Integer> entry : iterable) {
-            Pair<Integer, Integer> pair = entry.getKey();
-            Integer trips = entry.getValue();
+            final Pair<Integer, Integer> pair = entry.getKey();
+            final Integer trips = entry.getValue();
 
-            String stationA = stations.get(pair.getOne()).getName();
-            String stationB = stations.get(pair.getOther()).getName();
+            final String stationA = stations.get(pair.getOne()).getName();
+            final String stationB = stations.get(pair.getOther()).getName();
 
             if (stationA != null && stationB != null && trips > 0) {
-                String stationKey = stationA + ";" + stationB;
+                final String stationKey = stationA + ";" + stationB;
                 tripsCount.put(stationKey, trips);
             }
         }
 
-        List<Map.Entry<String, Integer>> sortedList = new ArrayList<>(tripsCount.entrySet());
+        final List<Map.Entry<String, Integer>> sortedList = new ArrayList<>(tripsCount.entrySet());
         sortedList.sort((entry1, entry2) -> {
             int cmp = entry2.getValue().compareTo(entry1.getValue());
             if (cmp == 0) {

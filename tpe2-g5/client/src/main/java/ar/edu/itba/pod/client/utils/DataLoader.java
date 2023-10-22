@@ -18,11 +18,14 @@ import com.hazelcast.core.IList;
 
 public class DataLoader {
     private final static Logger logger = LoggerFactory.getLogger(DataLoader.class);
+    private final static String STATIONS_CSV = "/stations.csv";
+    private final static String BIKES_CSV = "/stations.csv";
+    private final static DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static Map<Integer, Station> readStations(String path) {
         Map<Integer, Station> stations = null;
 
-        String stationsPath = path + "/stations.csv";
+        final String stationsPath = path + STATIONS_CSV;
 
         try (Stream<String> lines = Files.lines(Paths.get(stationsPath))) {
             stations = lines
@@ -44,11 +47,10 @@ public class DataLoader {
         return stations;
     }
 
-    public static void readBikes(String path, IList<Trip> tripsIList) {
+    public static void readBikes(final String path, final IList<Trip> tripsIList) {
         List<Trip> trips = null;
 
-        String bikesPath = path + "/bikes.csv";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        final String bikesPath = path + BIKES_CSV;
 
         try (Stream<String> lines = Files.lines(Paths.get(bikesPath))) {
             trips = lines
@@ -56,8 +58,8 @@ public class DataLoader {
                     .map(line -> line.split(";"))
                     .map(data ->
                             new Trip(
-                                    LocalDateTime.parse(data[0], formatter),
-                                    LocalDateTime.parse(data[2], formatter),
+                                    LocalDateTime.parse(data[0], FORMATTER),
+                                    LocalDateTime.parse(data[2], FORMATTER),
                                     Integer.parseInt(data[1]),
                                     Integer.parseInt(data[3]),
                                     Integer.parseInt(data[4])

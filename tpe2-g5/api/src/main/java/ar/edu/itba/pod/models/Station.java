@@ -26,31 +26,14 @@ public class Station implements DataSerializable {
     public int getPk() {
         return pk;
     }
-
     public String getName() {
         return name;
     }
-
     public double getLatitude() {
         return latitude;
     }
-
     public double getLongitude() {
         return longitude;
-    }
-
-    @Override
-    public int hashCode(){
-        return Objects.hash(pk);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Station station)) {
-            return false;
-        }
-        return this.pk == station.pk;
     }
 
     @Override
@@ -67,5 +50,19 @@ public class Station implements DataSerializable {
         name = in.readUTF();
         latitude = in.readDouble();
         longitude = in.readDouble();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pk);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Station station)) {
+            return false;
+        }
+        return this.pk == station.pk;
     }
 }

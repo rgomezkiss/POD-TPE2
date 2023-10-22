@@ -13,14 +13,14 @@ import com.hazelcast.mapreduce.Mapper;
 public class TripsBetweenStationsMapper implements Mapper<String, Trip, Pair<Integer, Integer>, Integer> {
     private final Map<Integer, Station> stations;
 
-    public TripsBetweenStationsMapper(Map<Integer,Station> stations) {
+    public TripsBetweenStationsMapper(Map<Integer, Station> stations) {
         this.stations = stations;
     }
 
     @Override
     public void map(String string, Trip trip, Context<Pair<Integer, Integer>, Integer> context) {
         if (stations.containsKey(trip.getStartStation()) && stations.containsKey(trip.getEndStation())) {
-            if(trip.getEndStation() != trip.getStartStation()) {
+            if (trip.getEndStation() != trip.getStartStation()) {
                 context.emit(new Pair<>(trip.getStartStation(), trip.getEndStation()), 1);
             }
         }

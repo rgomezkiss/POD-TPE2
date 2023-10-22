@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
 public class QueryParser implements Parser<QueryParams> {
 
     private final Logger logger = LoggerFactory.getLogger(QueryParser.class);
@@ -25,7 +24,6 @@ public class QueryParser implements Parser<QueryParams> {
     private final static String QUERY = "Dquery";
 
     private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
 
     public QueryParser() {
         options.addRequiredOption(SERVER_ADDRESSES, SERVER_ADDRESSES, true, "Addresses");
@@ -43,13 +41,13 @@ public class QueryParser implements Parser<QueryParams> {
         try {
             final CommandLine cmd = parser.parse(options, args);
 
-            String[] addressArray = cmd.getOptionValue(SERVER_ADDRESSES).split(";");
-            List<String> addresses = new ArrayList<>(Arrays.asList(addressArray));
+            final String[] addressArray = cmd.getOptionValue(SERVER_ADDRESSES).split(";");
+            final List<String> addresses = new ArrayList<>(Arrays.asList(addressArray));
 
-            String inPath = cmd.getOptionValue(IN_PATH);
-            String outPath = cmd.getOptionValue(OUT_PATH);
+            final String inPath = cmd.getOptionValue(IN_PATH);
+            final String outPath = cmd.getOptionValue(OUT_PATH);
 
-            int queryRequested = Integer.valueOf(cmd.getOptionValue(QUERY));
+            int queryRequested = Integer.parseInt(cmd.getOptionValue(QUERY));
 
             switch(queryRequested) {
                 case 1,3 -> {
@@ -57,13 +55,13 @@ public class QueryParser implements Parser<QueryParams> {
                 }
 
                 case 2 -> {
-                    int numberN = Integer.valueOf(cmd.getOptionValue(N));
+                    final int numberN = Integer.parseInt(cmd.getOptionValue(N));
                     return new QueryParams(addresses, inPath, outPath, numberN, queryRequested);
                 }
 
                 case 4 -> {
-                    LocalDateTime startTime = LocalDateTime.parse(cmd.getOptionValue(START_DATE), formatter);
-                    LocalDateTime endTime = LocalDateTime.parse(cmd.getOptionValue(END_DATE), formatter);
+                    final LocalDateTime startTime = LocalDateTime.parse(cmd.getOptionValue(START_DATE), formatter);
+                    final LocalDateTime endTime = LocalDateTime.parse(cmd.getOptionValue(END_DATE), formatter);
                     return new QueryParams(addresses, inPath, outPath, startTime, endTime, queryRequested);
                 }
             }

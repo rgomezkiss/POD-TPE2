@@ -1,6 +1,5 @@
 package ar.edu.itba.pod.mappers;
 
-
 import ar.edu.itba.pod.models.Pair;
 import ar.edu.itba.pod.models.Station;
 import ar.edu.itba.pod.models.Trip;
@@ -21,7 +20,7 @@ public class LongestTripMapper implements Mapper<String, Trip, Pair<Integer, Int
     @Override
     public void map(String string, Trip trip, Context<Pair<Integer, Integer>, Pair<LocalDateTime, Integer>> context) {
         if (stations.containsKey(trip.getStartStation()) && stations.containsKey(trip.getEndStation())) {
-            if(trip.getEndStation() != trip.getStartStation()) {
+            if (trip.getEndStation() != trip.getStartStation()) {
                 context.emit(new Pair<>(trip.getStartStation(), trip.getEndStation()), new Pair<>(trip.getStartDate(), trip.getTripLength()));
             }
         }

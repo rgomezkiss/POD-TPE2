@@ -11,8 +11,10 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("deprecation")
-public class LongestTripCollator implements Collator<Map.Entry<Pair<Integer, Integer>, Pair<LocalDateTime, Integer>>, List<Map.Entry<String, Pair<LocalDateTime, Integer>>>>{
-    private Map<Integer, Station> stations;
+public class LongestTripCollator implements Collator<
+        Map.Entry<Pair<Integer, Integer>, Pair<LocalDateTime, Integer>>,
+        List<Map.Entry<String, Pair<LocalDateTime, Integer>>>> {
+    private final Map<Integer, Station> stations;
 
     public LongestTripCollator(Map<Integer, Station> stations) {
         this.stations = stations;
@@ -20,14 +22,14 @@ public class LongestTripCollator implements Collator<Map.Entry<Pair<Integer, Int
 
     @Override
     public List<Map.Entry<String, Pair<LocalDateTime, Integer>>> collate(Iterable<Map.Entry<Pair<Integer, Integer>, Pair<LocalDateTime, Integer>>> iterable) {
-        Map<String, Pair<LocalDateTime, Integer>> tripsCount = new HashMap<>();
+        final Map<String, Pair<LocalDateTime, Integer>> tripsCount = new HashMap<>();
 
         for (Map.Entry<Pair<Integer, Integer>, Pair<LocalDateTime, Integer>> entry : iterable) {
-            Pair<Integer, Integer> pair = entry.getKey();
-            Pair<LocalDateTime, Integer> longestTrip = entry.getValue();
+            final Pair<Integer, Integer> pair = entry.getKey();
+            final Pair<LocalDateTime, Integer> longestTrip = entry.getValue();
 
-            String stationA = stations.get(pair.getOne()).getName();
-            String stationB = stations.get(pair.getOther()).getName();
+            final String stationA = stations.get(pair.getOne()).getName();
+            final String stationB = stations.get(pair.getOther()).getName();
 
             if (stationA != null && stationB != null) {
                 String stationKey = stationA + ";" + stationB;
@@ -35,7 +37,7 @@ public class LongestTripCollator implements Collator<Map.Entry<Pair<Integer, Int
             }
         }
 
-        List<Map.Entry<String, Pair<LocalDateTime, Integer>>> sortedList = new ArrayList<>(tripsCount.entrySet());
+        final List<Map.Entry<String, Pair<LocalDateTime, Integer>>> sortedList = new ArrayList<>(tripsCount.entrySet());
         sortedList.sort((entry1, entry2) -> {
             int cmp = entry2.getValue().getOther().compareTo(entry1.getValue().getOther());
             if (cmp == 0) {
