@@ -3,14 +3,18 @@ package ar.edu.itba.pod.client;
 import ar.edu.itba.pod.client.utils.DataLoader;
 import ar.edu.itba.pod.client.utils.QueryParams;
 import ar.edu.itba.pod.client.utils.QueryParser;
+import ar.edu.itba.pod.client.utils.ResultWriter;
 import ar.edu.itba.pod.collators.LongestTripCollator;
+import ar.edu.itba.pod.collators.TopAverageDistanceStationsCollator;
 import ar.edu.itba.pod.collators.TripsBetweenStationsCollator;
 import ar.edu.itba.pod.mappers.LongestTripMapper;
+import ar.edu.itba.pod.mappers.TopAverageDistanceStationsMapper;
 import ar.edu.itba.pod.mappers.TripsBetweenStationsMapper;
 import ar.edu.itba.pod.models.Pair;
 import ar.edu.itba.pod.models.Station;
 import ar.edu.itba.pod.models.Trip;
 import ar.edu.itba.pod.reducers.LongestTripReducerFactory;
+import ar.edu.itba.pod.reducers.TopAverageDistanceStationsReducerFactory;
 import ar.edu.itba.pod.reducers.TripsBetweenStationsReducerFactory;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
@@ -39,20 +43,17 @@ public class QueryClient {
 
     public static void main(String[] args) {
         logger.info("Client Starting ...");
+
         logger.info("Argument Parsing ...");
-
         final QueryParams params = new QueryParser().parse(args);
-
         logger.info("Finished Argument Parsing");
 
         final HazelcastInstance hazelcastInstance = getHazelClientInstance(params.getServerAddresses());
 
         logger.info("Data Parsing ...");
-
         final Map<Integer, Station> stationMap = DataLoader.readStations(params.getInPath());
         final IList<Trip> tripIList = hazelcastInstance.getList(BIKES_LIST);
         DataLoader.readBikes(params.getInPath(), tripIList);
-
         logger.info("Finished Data Parsing");
 
         try {
@@ -71,6 +72,16 @@ public class QueryClient {
                 }
 
                 case 2 -> {
+                    final KeyValueSource<String, Trip> keyValueSource = KeyValueSource.fromList(tripIList);
+                    final Job<String, Trip> job = hazelcastInstance.getJobTracker(QUERY2).newJob(keyValueSource);
+
+                    final List<Map.Entry<String, Double>> result = job
+                            .mapper(new TopAverageDistanceStationsMapper(stationMap))
+                            .reducer(new TopAverageDistanceStationsReducerFactory())
+                            .submit(new TopAverageDistanceStationsCollator(stationMap))
+                            .get();
+
+//                    ResultWriter.writeResult(params.getOutPath(), "station;avg_distance\n", result);
                 }
 
                 case 3 -> {

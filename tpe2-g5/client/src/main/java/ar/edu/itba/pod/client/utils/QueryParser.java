@@ -22,7 +22,6 @@ public class QueryParser implements Parser<QueryParams> {
     private final static String END_DATE = "DendDate";
     private final static String N = "Dn";
     private final static String QUERY = "Dquery";
-
     private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public QueryParser() {

@@ -36,6 +36,18 @@ public class Station implements DataSerializable {
         return longitude;
     }
 
+    public double haversineDistance(final Station other) {
+        final double latitudeDifference = Math.toRadians(other.getLatitude() - this.latitude);
+        final double longitudeDifference = Math.toRadians(other.getLongitude() - this.longitude);
+        final double SQRTSegment = Math.sqrt(
+                Math.pow(Math.sin(latitudeDifference / 2), 2)
+                        + Math.cos(Math.toRadians(this.latitude))
+                        * Math.cos(Math.toRadians(other.getLatitude()))
+                        * Math.pow(Math.sin(longitudeDifference / 2), 2)
+        );
+        return 2 * 6371 * Math.asin(SQRTSegment);
+    }
+
     @Override
     public void writeData(ObjectDataOutput out) throws IOException {
         out.writeInt(pk);
