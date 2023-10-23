@@ -14,10 +14,12 @@ import java.util.Map;
 public class LongestTripCollator implements Collator<
         Map.Entry<Pair<Integer, Integer>, Pair<LocalDateTime, Integer>>,
         List<Map.Entry<String, Pair<LocalDateTime, Integer>>>> {
-    private final Map<Integer, Station> stations;
+    private final Map<Integer, Station> stationMap = new HashMap<>();
 
-    public LongestTripCollator(Map<Integer, Station> stations) {
-        this.stations = stations;
+    public LongestTripCollator(List<Station> stations) {
+        for (Station s:stations) {
+            stationMap.put(s.getPk(), s);
+        }
     }
 
     @Override
@@ -28,8 +30,8 @@ public class LongestTripCollator implements Collator<
             final Pair<Integer, Integer> pair = entry.getKey();
             final Pair<LocalDateTime, Integer> longestTrip = entry.getValue();
 
-            final String stationA = stations.get(pair.getOne()).getName();
-            final String stationB = stations.get(pair.getOther()).getName();
+            final String stationA = stationMap.get(pair.getOne()).getName();
+            final String stationB = stationMap.get(pair.getOther()).getName();
 
             if (stationA != null && stationB != null) {
                 String stationKey = stationA + ";" + stationB;

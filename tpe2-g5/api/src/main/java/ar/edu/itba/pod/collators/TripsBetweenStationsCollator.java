@@ -13,10 +13,12 @@ import java.util.Map;
 public class TripsBetweenStationsCollator implements Collator<
         Map.Entry<Pair<Integer, Integer>, Integer>,
         List<Map.Entry<String, Integer>>> {
-    private final Map<Integer, Station> stations;
+    private final Map<Integer, Station> stationMap = new HashMap<>();
 
-    public TripsBetweenStationsCollator(Map<Integer, Station> stations) {
-        this.stations = stations;
+    public TripsBetweenStationsCollator(List<Station> stations) {
+        for (Station s:stations) {
+            stationMap.put(s.getPk(), s);
+        }
     }
 
     @Override
@@ -27,8 +29,8 @@ public class TripsBetweenStationsCollator implements Collator<
             final Pair<Integer, Integer> pair = entry.getKey();
             final Integer trips = entry.getValue();
 
-            final String stationA = stations.get(pair.getOne()).getName();
-            final String stationB = stations.get(pair.getOther()).getName();
+            final String stationA = stationMap.get(pair.getOne()).getName();
+            final String stationB = stationMap.get(pair.getOther()).getName();
 
             if (stationA != null && stationB != null && trips > 0) {
                 final String stationKey = stationA + ";" + stationB;

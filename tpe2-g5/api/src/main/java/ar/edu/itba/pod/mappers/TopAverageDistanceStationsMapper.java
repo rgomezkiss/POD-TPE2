@@ -5,23 +5,27 @@ import ar.edu.itba.pod.models.Trip;
 import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("deprecation")
 public class TopAverageDistanceStationsMapper implements Mapper<String, Trip, Integer, Double> {
 
-    private final Map<Integer, Station> stations;
+    private final Map<Integer, Station> stationMap = new HashMap<>();
 
-    public TopAverageDistanceStationsMapper(Map<Integer, Station> stations) {
-        this.stations = stations;
+    public TopAverageDistanceStationsMapper(List<Station> stations) {
+        for (Station s:stations) {
+            stationMap.put(s.getPk(), s);
+        }
     }
 
     @Override
     public void map(String s, Trip trip, Context<Integer, Double> context) {
-        if (stations.containsKey(trip.getStartStation()) && stations.containsKey(trip.getEndStation())) {
+        if (stationMap.containsKey(trip.getStartStation()) && stationMap.containsKey(trip.getEndStation())) {
             if (trip.getEndStation() != trip.getStartStation() && trip.getIsMember() == 1) {
-                final Station startStation = stations.get(trip.getStartStation());
-                final Station endStation = stations.get(trip.getEndStation());
+                final Station startStation = stationMap.get(trip.getStartStation());
+                final Station endStation = stationMap.get(trip.getEndStation());
                 context.emit(trip.getStartStation(), startStation.haversineDistance(endStation));
             }
         }

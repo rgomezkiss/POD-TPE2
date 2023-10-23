@@ -51,7 +51,7 @@ public class QueryClient {
         final HazelcastInstance hazelcastInstance = getHazelClientInstance(params.getServerAddresses());
 
         logger.info("Data Parsing ...");
-        final Map<Integer, Station> stationMap = DataLoader.readStations(params.getInPath());
+        final List<Station> stations = DataLoader.readStations(params.getInPath());
         final IList<Trip> tripIList = hazelcastInstance.getList(BIKES_LIST);
         tripIList.clear();
         DataLoader.readBikes(params.getInPath(), tripIList);
@@ -64,9 +64,9 @@ public class QueryClient {
                     final Job<String, Trip> job = hazelcastInstance.getJobTracker(QUERY1).newJob(keyValueSource);
 
                     final List<Map.Entry<String, Integer>> result = job
-                            .mapper(new TripsBetweenStationsMapper(stationMap))
+                            .mapper(new TripsBetweenStationsMapper(stations))
                             .reducer(new TripsBetweenStationsReducerFactory())
-                            .submit(new TripsBetweenStationsCollator(stationMap))
+                            .submit(new TripsBetweenStationsCollator(stations))
                             .get();
 
 //                    ResultWriter.writeResult(params.getOutPath(), "station_a;station_b;trips_between_a_b", result);
@@ -77,9 +77,9 @@ public class QueryClient {
                     final Job<String, Trip> job = hazelcastInstance.getJobTracker(QUERY2).newJob(keyValueSource);
 
                     final List<Map.Entry<String, Double>> result = job
-                            .mapper(new TopAverageDistanceStationsMapper(stationMap))
+                            .mapper(new TopAverageDistanceStationsMapper(stations))
                             .reducer(new TopAverageDistanceStationsReducerFactory())
-                            .submit(new TopAverageDistanceStationsCollator(stationMap))
+                            .submit(new TopAverageDistanceStationsCollator(stations))
                             .get();
 
 //                    ResultWriter.writeResult(params.getOutPath(), "station;avg_distance\n", result);
@@ -90,9 +90,9 @@ public class QueryClient {
                     final Job<String, Trip> job = hazelcastInstance.getJobTracker(QUERY3).newJob(keyValueSource);
 
                     final List<Map.Entry<String, Pair<LocalDateTime, Integer>>> result = job
-                            .mapper(new LongestTripMapper(stationMap))
+                            .mapper(new LongestTripMapper(stations))
                             .reducer(new LongestTripReducerFactory())
-                            .submit(new LongestTripCollator(stationMap))
+                            .submit(new LongestTripCollator(stations))
                             .get();
 
 //                    ResultWriter.writeResult(params.getOutPath(), "start_station;end_station;start_date;minutes\n", result);

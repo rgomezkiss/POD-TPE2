@@ -5,9 +5,10 @@ import com.hazelcast.nio.ObjectDataOutput;
 import com.hazelcast.nio.serialization.DataSerializable;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Station implements DataSerializable {
+public class Station implements Serializable {
     private int pk;
     private String name;
     private double latitude;
@@ -49,21 +50,21 @@ public class Station implements DataSerializable {
         return 2 * 6371 * Math.asin(SQRTSegment);
     }
 
-    @Override
-    public void writeData(ObjectDataOutput out) throws IOException {
-        out.writeInt(pk);
-        out.writeUTF(name);
-        out.writeDouble(latitude);
-        out.writeDouble(longitude);
-    }
-
-    @Override
-    public void readData(ObjectDataInput in) throws IOException {
-        pk = in.readInt();
-        name = in.readUTF();
-        latitude = in.readDouble();
-        longitude = in.readDouble();
-    }
+//    @Override
+//    public void writeData(ObjectDataOutput out) throws IOException {
+//        out.writeInt(pk);
+//        out.writeUTF(name);
+//        out.writeDouble(latitude);
+//        out.writeDouble(longitude);
+//    }
+//
+//    @Override
+//    public void readData(ObjectDataInput in) throws IOException {
+//        pk = in.readInt();
+//        name = in.readUTF();
+//        latitude = in.readDouble();
+//        longitude = in.readDouble();
+//    }
 
     @Override
     public int hashCode() {

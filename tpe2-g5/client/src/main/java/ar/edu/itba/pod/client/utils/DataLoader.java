@@ -22,8 +22,8 @@ public class DataLoader {
     private final static String BIKES_CSV = "/bikes.csv";
     private final static DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public static Map<Integer, Station> readStations(String path) {
-        Map<Integer, Station> stations = null;
+    public static List<Station> readStations(String path) {
+        List<Station> stations = null;
 
         final String stationsPath = path + STATIONS_CSV;
 
@@ -31,15 +31,15 @@ public class DataLoader {
             stations = lines
                     .skip(1)
                     .map(line -> line.split(";"))
-                    .collect(Collectors.toMap(
-                            parts -> Integer.parseInt(parts[0]),
-                            parts -> new Station(
-                                    Integer.parseInt(parts[0]),
-                                    parts[1],
-                                    Double.parseDouble(parts[2]),
-                                    Double.parseDouble(parts[3])
+                    .map(data ->
+                            new Station(
+                                    Integer.parseInt(data[0]),
+                                    data[1],
+                                    Double.parseDouble(data[2]),
+                                    Double.parseDouble(data[3])
                             )
-                    ));
+                    )
+                    .collect(Collectors.toList());
         } catch (IOException e) {
             logger.error("Error while reading file: {}", e.getMessage());
         }
