@@ -13,6 +13,7 @@ public class Station implements DataSerializable {
     private double latitude;
     private double longitude;
 
+    //TODO: check serialization not working properly
     public Station(int pk, String name, double latitude, double longitude) {
         this.pk = pk;
         this.name = name;

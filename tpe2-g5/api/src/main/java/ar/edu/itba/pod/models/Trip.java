@@ -7,6 +7,8 @@ import com.hazelcast.nio.serialization.DataSerializable;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class Trip implements DataSerializable {
@@ -49,8 +51,8 @@ public class Trip implements DataSerializable {
 
     @Override
     public void writeData(ObjectDataOutput out) throws IOException {
-        out.writeObject(startDate);
-        out.writeObject(endDate);
+        out.writeLong(startDate.toInstant(ZoneOffset.UTC).toEpochMilli());
+        out.writeLong(endDate.toInstant(ZoneOffset.UTC).toEpochMilli());
         out.writeInt(startStation);
         out.writeInt(endStation);
         out.writeInt(isMember);
@@ -58,8 +60,10 @@ public class Trip implements DataSerializable {
 
     @Override
     public void readData(ObjectDataInput in) throws IOException {
-        startDate = in.readObject();
-        endDate = in.readObject();
+        long epochMillis = in.readLong();
+        startDate = LocalDateTime.ofEpochSecond(epochMillis / 1000, 0, ZoneOffset.UTC);
+        epochMillis = in.readLong();
+        endDate = LocalDateTime.ofEpochSecond(epochMillis / 1000, 0, ZoneOffset.UTC);
         startStation = in.readInt();
         endStation = in.readInt();
         isMember = in.readInt();

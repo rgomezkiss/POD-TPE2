@@ -25,12 +25,12 @@ public class Server {
         final InterfacesConfig interfacesConfig = new InterfacesConfig().setInterfaces(Collections.singletonList(IP)).setEnabled(false);
         final NetworkConfig networkConfig = new NetworkConfig().setInterfaces(interfacesConfig).setJoin(joinConfig);
         config.setNetworkConfig(networkConfig);
+        Hazelcast.newHazelcastInstance(config);
 
 //        ManagementCenterConfig managementCenterConfig = new ManagementCenterConfig()
 //                .setUrl("http://localhost:8080/mancenter/")
 //                .setEnabled(true);
 //        config.setManagementCenterConfig(managementCenterConfig);
 
-        Hazelcast.newHazelcastInstance(config);
     }
 }

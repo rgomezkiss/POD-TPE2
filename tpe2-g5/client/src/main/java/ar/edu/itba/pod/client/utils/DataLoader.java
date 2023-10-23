@@ -19,7 +19,7 @@ import com.hazelcast.core.IList;
 public class DataLoader {
     private final static Logger logger = LoggerFactory.getLogger(DataLoader.class);
     private final static String STATIONS_CSV = "/stations.csv";
-    private final static String BIKES_CSV = "/stations.csv";
+    private final static String BIKES_CSV = "/bikes.csv";
     private final static DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static Map<Integer, Station> readStations(String path) {

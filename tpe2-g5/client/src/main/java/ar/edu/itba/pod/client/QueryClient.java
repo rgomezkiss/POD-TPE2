@@ -53,6 +53,7 @@ public class QueryClient {
         logger.info("Data Parsing ...");
         final Map<Integer, Station> stationMap = DataLoader.readStations(params.getInPath());
         final IList<Trip> tripIList = hazelcastInstance.getList(BIKES_LIST);
+        tripIList.clear();
         DataLoader.readBikes(params.getInPath(), tripIList);
         logger.info("Finished Data Parsing");
 
@@ -101,7 +102,14 @@ public class QueryClient {
                 }
             }
         } catch (Exception e) {
+            //TODO: start adding validations
+            logger.error(e.getMessage());
+            e.printStackTrace();
             logger.info("Error");
+        }
+        finally {
+            HazelcastClient.shutdownAll();
+            logger.info("Finished query");
         }
     }
 
