@@ -5,15 +5,18 @@ import ar.edu.itba.pod.client.utils.QueryParams;
 import ar.edu.itba.pod.client.utils.QueryParser;
 import ar.edu.itba.pod.client.utils.ResultWriter;
 import ar.edu.itba.pod.collators.LongestTripCollator;
+import ar.edu.itba.pod.collators.NetAffluenceCollator;
 import ar.edu.itba.pod.collators.TopAverageDistanceStationsCollator;
 import ar.edu.itba.pod.collators.TripsBetweenStationsCollator;
 import ar.edu.itba.pod.mappers.LongestTripMapper;
+import ar.edu.itba.pod.mappers.NetAffluenceMapper;
 import ar.edu.itba.pod.mappers.TopAverageDistanceStationsMapper;
 import ar.edu.itba.pod.mappers.TripsBetweenStationsMapper;
 import ar.edu.itba.pod.models.Pair;
 import ar.edu.itba.pod.models.Station;
 import ar.edu.itba.pod.models.Trip;
 import ar.edu.itba.pod.reducers.LongestTripReducerFactory;
+import ar.edu.itba.pod.reducers.NetAffluenceReducerFactory;
 import ar.edu.itba.pod.reducers.TopAverageDistanceStationsReducerFactory;
 import ar.edu.itba.pod.reducers.TripsBetweenStationsReducerFactory;
 import com.hazelcast.client.HazelcastClient;
@@ -99,6 +102,16 @@ public class QueryClient {
                 }
 
                 case 4 -> {
+                    final KeyValueSource<String, Trip> keyValueSource = KeyValueSource.fromList(tripIList);
+                    final Job<String, Trip> job = hazelcastInstance.getJobTracker(QUERY4).newJob(keyValueSource);
+
+                    final List<Map.Entry<String, List<Integer>>> result = job
+                            .mapper(new NetAffluenceMapper(stations, params.getStartDate(), params.getEndDate()))
+                            .reducer(new NetAffluenceReducerFactory())
+                            .submit(new NetAffluenceCollator(stations, params.getStartDate(), params.getEndDate()))
+                            .get();
+
+//                    ResultWriter.writeResult(params.getOutPath(), station;pos_afflux;neutral_afflux;negative_afflux\n", result);
                 }
             }
         } catch (Exception e) {

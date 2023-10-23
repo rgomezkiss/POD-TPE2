@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 @SuppressWarnings("deprecation")
 public class LongestTripCollator implements Collator<
         Map.Entry<Pair<Integer, Integer>, Pair<LocalDateTime, Integer>>,
@@ -17,7 +18,7 @@ public class LongestTripCollator implements Collator<
     private final Map<Integer, Station> stationMap = new HashMap<>();
 
     public LongestTripCollator(List<Station> stations) {
-        for (Station s:stations) {
+        for (Station s : stations) {
             stationMap.put(s.getPk(), s);
         }
     }

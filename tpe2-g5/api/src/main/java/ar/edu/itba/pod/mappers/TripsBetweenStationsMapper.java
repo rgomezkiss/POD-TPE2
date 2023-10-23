@@ -16,7 +16,7 @@ public class TripsBetweenStationsMapper implements Mapper<String, Trip, Pair<Int
     private final Map<Integer, Station> stationMap = new HashMap<>();
 
     public TripsBetweenStationsMapper(List<Station> stations) {
-        for (Station s:stations) {
+        for (Station s : stations) {
             stationMap.put(s.getPk(), s);
         }
     }

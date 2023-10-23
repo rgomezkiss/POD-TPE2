@@ -16,7 +16,7 @@ public class LongestTripMapper implements Mapper<String, Trip, Pair<Integer, Int
     private final Map<Integer, Station> stationMap = new HashMap<>();
 
     public LongestTripMapper(List<Station> stations) {
-        for (Station s:stations) {
+        for (Station s : stations) {
             stationMap.put(s.getPk(), s);
         }
     }

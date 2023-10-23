@@ -14,7 +14,7 @@ public class TopAverageDistanceStationsCollator implements Collator<Map.Entry<In
     private final Map<Integer, Station> stationMap = new HashMap<>();
 
     public TopAverageDistanceStationsCollator(List<Station> stations) {
-        for (Station s:stations) {
+        for (Station s : stations) {
             stationMap.put(s.getPk(), s);
         }
     }

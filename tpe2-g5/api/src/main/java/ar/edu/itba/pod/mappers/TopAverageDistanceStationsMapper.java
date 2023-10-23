@@ -15,7 +15,7 @@ public class TopAverageDistanceStationsMapper implements Mapper<String, Trip, In
     private final Map<Integer, Station> stationMap = new HashMap<>();
 
     public TopAverageDistanceStationsMapper(List<Station> stations) {
-        for (Station s:stations) {
+        for (Station s : stations) {
             stationMap.put(s.getPk(), s);
         }
     }
