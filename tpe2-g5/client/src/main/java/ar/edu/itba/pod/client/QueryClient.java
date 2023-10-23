@@ -72,7 +72,7 @@ public class QueryClient {
                             .submit(new TripsBetweenStationsCollator(stations))
                             .get();
 
-//                    ResultWriter.writeResult(params.getOutPath(), "station_a;station_b;trips_between_a_b", result);
+                    ResultWriter.writeQuery1Result(params.getOutPath() , result);
                 }
 
                 case 2 -> {
@@ -82,10 +82,10 @@ public class QueryClient {
                     final List<Map.Entry<String, Double>> result = job
                             .mapper(new TopAverageDistanceStationsMapper(stations))
                             .reducer(new TopAverageDistanceStationsReducerFactory())
-                            .submit(new TopAverageDistanceStationsCollator(stations))
+                            .submit(new TopAverageDistanceStationsCollator(stations, params.getN()))
                             .get();
 
-//                    ResultWriter.writeResult(params.getOutPath(), "station;avg_distance\n", result);
+                    ResultWriter.writeQuery2Result(params.getOutPath(), result);
                 }
 
                 case 3 -> {
@@ -98,7 +98,8 @@ public class QueryClient {
                             .submit(new LongestTripCollator(stations))
                             .get();
 
-//                    ResultWriter.writeResult(params.getOutPath(), "start_station;end_station;start_date;minutes\n", result);
+                    ResultWriter.writeQuery3Result(params.getOutPath(), result);
+
                 }
 
                 case 4 -> {
@@ -111,7 +112,7 @@ public class QueryClient {
                             .submit(new NetAffluenceCollator(stations, params.getStartDate(), params.getEndDate()))
                             .get();
 
-//                    ResultWriter.writeResult(params.getOutPath(), station;pos_afflux;neutral_afflux;negative_afflux\n", result);
+                    ResultWriter.writeQuery4Result(params.getOutPath(), result);
                 }
             }
         } catch (Exception e) {

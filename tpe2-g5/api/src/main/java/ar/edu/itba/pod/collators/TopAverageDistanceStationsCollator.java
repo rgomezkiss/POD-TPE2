@@ -12,11 +12,13 @@ import java.util.Map;
 public class TopAverageDistanceStationsCollator implements Collator<Map.Entry<Integer, Double>, List<Map.Entry<String, Double>>> {
 
     private final Map<Integer, Station> stationMap = new HashMap<>();
+    private final int N;
 
-    public TopAverageDistanceStationsCollator(List<Station> stations) {
+    public TopAverageDistanceStationsCollator(List<Station> stations, int N) {
         for (Station s : stations) {
             stationMap.put(s.getPk(), s);
         }
+        this.N = N;
     }
 
     @Override
@@ -41,6 +43,6 @@ public class TopAverageDistanceStationsCollator implements Collator<Map.Entry<In
             return cmp;
         });
 
-        return sortedList;
+        return sortedList.subList(0, this.N - 1);
     }
 }
