@@ -15,16 +15,19 @@ public class Server {
 
     public static void main(String[] args) {
         logger.info("Server Starting ...");
-        final Config config = new Config();
+        Config config = new Config();
 
-        final GroupConfig groupConfig = new GroupConfig().setName(HZ_CLIENT_NAME).setPassword(HZ_CLIENT_PASS);
+        GroupConfig groupConfig = new GroupConfig()
+                .setName(HZ_CLIENT_NAME)
+                .setPassword(HZ_CLIENT_PASS);
         config.setGroupConfig(groupConfig);
 
-        final MulticastConfig multicastConfig = new MulticastConfig();
-        final JoinConfig joinConfig = new JoinConfig().setMulticastConfig(multicastConfig);
-        final InterfacesConfig interfacesConfig = new InterfacesConfig().setInterfaces(Collections.singletonList(IP)).setEnabled(false);
-        final NetworkConfig networkConfig = new NetworkConfig().setInterfaces(interfacesConfig).setJoin(joinConfig);
+        MulticastConfig multicastConfig = new MulticastConfig();
+        JoinConfig joinConfig = new JoinConfig().setMulticastConfig(multicastConfig);
+        InterfacesConfig interfacesConfig = new InterfacesConfig().setInterfaces(Collections.singletonList(IP)).setEnabled(false);
+        NetworkConfig networkConfig = new NetworkConfig().setInterfaces(interfacesConfig).setJoin(joinConfig);
         config.setNetworkConfig(networkConfig);
+
         Hazelcast.newHazelcastInstance(config);
 
 //        ManagementCenterConfig managementCenterConfig = new ManagementCenterConfig()
