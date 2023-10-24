@@ -4,6 +4,8 @@ import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.text.DateFormatter;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -22,7 +24,7 @@ public class QueryParser implements Parser<QueryParams> {
     private final static String END_DATE = "DendDate";
     private final static String N = "Dn";
     private final static String QUERY = "Dquery";
-    private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private final static DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public QueryParser() {
         options.addRequiredOption(SERVER_ADDRESSES, SERVER_ADDRESSES, true, "Addresses");
@@ -31,7 +33,7 @@ public class QueryParser implements Parser<QueryParams> {
         options.addOption(START_DATE, START_DATE, true, "Start date");
         options.addOption(END_DATE, END_DATE, true, "End date");
         options.addOption(N, N, true, "N");
-        options.addOption(QUERY, QUERY, true, "Query requested");
+        options.addRequiredOption(QUERY, QUERY, true, "Query requested");
     }
 
     // -Daddresses='xx.xx.xx.xx:XXXX;yy.yy.yy.yy:YYYY' -DinPath=XX -DoutPath=YY -Dn=n -DstartDate=... -DendDate=... -Dquery=x
@@ -59,8 +61,8 @@ public class QueryParser implements Parser<QueryParams> {
                 }
 
                 case 4 -> {
-                    final LocalDateTime startTime = LocalDateTime.parse(cmd.getOptionValue(START_DATE), formatter);
-                    final LocalDateTime endTime = LocalDateTime.parse(cmd.getOptionValue(END_DATE), formatter);
+                    final LocalDate startTime = LocalDate.parse(cmd.getOptionValue(START_DATE), FORMATTER);
+                    final LocalDate endTime = LocalDate.parse(cmd.getOptionValue(END_DATE), FORMATTER);
                     return new QueryParams(addresses, inPath, outPath, startTime, endTime, queryRequested);
                 }
             }

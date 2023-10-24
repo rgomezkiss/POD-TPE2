@@ -6,19 +6,20 @@ import com.hazelcast.mapreduce.Collator;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("deprecation")
-public class NetAffluenceCollator implements Collator<Map.Entry<String, List<Integer>>, List<Map.Entry<String, List<Integer>>>> {
+public class NetAffluenceCollator implements Collator<Map.Entry<String, List<Long>>, List<Map.Entry<String, List<Long>>>> {
 
     private final Map<Integer, Station> stationMap = new HashMap<>();
-    private final LocalDateTime startDate;
-    private final LocalDateTime endDate;
+    private final LocalDate startDate;
+    private final LocalDate endDate;
 
-    public NetAffluenceCollator(List<Station> stations, LocalDateTime startDate, LocalDateTime endDate) {
+    public NetAffluenceCollator(List<Station> stations, LocalDate startDate, LocalDate endDate) {
         for (Station s : stations) {
             stationMap.put(s.getPk(), s);
         }
@@ -27,22 +28,23 @@ public class NetAffluenceCollator implements Collator<Map.Entry<String, List<Int
     }
 
     @Override
-    public List<Map.Entry<String, List<Integer>>> collate(Iterable<Map.Entry<String, List<Integer>>> iterable) {
-        final Map<String, List<Integer>> map = new HashMap<>();
-        final int totalDays = countTotalDayInRange(startDate, endDate);
+    public List<Map.Entry<String, List<Long>>> collate(Iterable<Map.Entry<String, List<Long>>> iterable) {
+        final Map<String, List<Long>> map = new HashMap<>();
 
-        for (Map.Entry<String, List<Integer>> entry : iterable) {
+        final long totalDays =  ChronoUnit.DAYS.between(startDate, endDate);
+
+        for (Map.Entry<String, List<Long>> entry : iterable) {
             final String stationName = entry.getKey();
-            final List<Integer> affluencesList = entry.getValue();
-            final int totalDayPerStation = affluencesList.get(0) + affluencesList.get(1) + affluencesList.get(2);
+            final List<Long> affluencesList = entry.getValue();
+            final long totalDayPerStation = affluencesList.get(0) + affluencesList.get(1) + affluencesList.get(2);
             if (totalDayPerStation < totalDays) {
-                int missedDays = totalDays - totalDayPerStation;
+                long missedDays = totalDays - totalDayPerStation;
                 affluencesList.set(1, affluencesList.get(1) + missedDays);
             }
             map.put(stationName, affluencesList);
         }
 
-        final List<Map.Entry<String, List<Integer>>> sortedList = new ArrayList<>(map.entrySet());
+        final List<Map.Entry<String, List<Long>>> sortedList = new ArrayList<>(map.entrySet());
         sortedList.sort((entry1, entry2) -> {
             int cmp = entry2.getValue().get(0).compareTo(entry1.getValue().get(0));
             if (cmp == 0) {
@@ -52,20 +54,5 @@ public class NetAffluenceCollator implements Collator<Map.Entry<String, List<Int
         });
 
         return sortedList;
-    }
-
-    private int countTotalDayInRange(LocalDateTime startDate, LocalDateTime endDate) {
-        LocalDate startDateOnly = startDate.toLocalDate();
-        LocalDate endDateOnly = endDate.toLocalDate();
-
-        Period period = Period.between(startDateOnly, endDateOnly);
-        int totalDays = period.getDays();
-
-        // Incluir el último día en el rango si no está incluido
-        if (!endDate.toLocalDate().isEqual(endDateOnly)) {
-            totalDays++;
-        }
-
-        return totalDays;
     }
 }

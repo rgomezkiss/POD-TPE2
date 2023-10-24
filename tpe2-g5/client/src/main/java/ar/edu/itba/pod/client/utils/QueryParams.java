@@ -1,5 +1,6 @@
 package ar.edu.itba.pod.client.utils;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -7,8 +8,8 @@ public class QueryParams {
     private final List<String> addresses;
     private final String inPath;
     private final String outPath;
-    private final LocalDateTime startDate;
-    private final LocalDateTime endDate;
+    private final LocalDate startDate;
+    private final LocalDate endDate;
     private final int N;
     private final int query;
 
@@ -22,7 +23,7 @@ public class QueryParams {
         this.query = query;
     }
 
-    public QueryParams(List<String> addresses, String inPath, String outPath, LocalDateTime startDate, LocalDateTime endDate, int query) {
+    public QueryParams(List<String> addresses, String inPath, String outPath, LocalDate startDate, LocalDate endDate, int query) {
         this.addresses = addresses;
         this.inPath = inPath;
         this.outPath = outPath;
@@ -51,10 +52,10 @@ public class QueryParams {
     public String getOutPath() {
         return outPath;
     }
-    public LocalDateTime getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
-    public LocalDateTime getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
     public int getN() {

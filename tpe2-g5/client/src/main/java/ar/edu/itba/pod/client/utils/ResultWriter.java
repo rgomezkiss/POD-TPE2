@@ -5,6 +5,7 @@ import ar.edu.itba.pod.models.Pair;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -35,20 +36,22 @@ public class ResultWriter {
     }
 
     public static void writeQuery3Result(String outPath, List<Map.Entry<String, Pair<LocalDateTime, Integer>>> result) {
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+
         try (PrintWriter writer = new PrintWriter(outPath + "/query3.csv")) {
             writer.println( "start_station;end_station;start_date;minutes");
             for (Map.Entry<String, Pair<LocalDateTime, Integer>> r: result) {
-                writer.println(r.getKey() + ";" + r.getValue().getOne() + ";" + r.getValue().getOther());
+                writer.println(r.getKey() + ";" + r.getValue().getOne().format(formatter) + ";" + r.getValue().getOther());
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void writeQuery4Result(String outPath, List<Map.Entry<String, List<Integer>>> result) {
+    public static void writeQuery4Result(String outPath, List<Map.Entry<String, List<Long>>> result) {
         try (PrintWriter writer = new PrintWriter(outPath + "/query4.csv")) {
             writer.println( "station;pos_afflux;neutral_afflux;negative_afflux");
-            for (Map.Entry<String, List<Integer>> r: result) {
+            for (Map.Entry<String, List<Long>> r: result) {
                 writer.println(r.getKey() + ";" + r.getValue().get(0)  + ";" + r.getValue().get(1) + ";" + r.getValue().get(2));
             }
         } catch (IOException e) {

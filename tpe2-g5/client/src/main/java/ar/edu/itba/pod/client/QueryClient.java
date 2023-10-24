@@ -106,7 +106,7 @@ public class QueryClient {
                     final KeyValueSource<String, Trip> keyValueSource = KeyValueSource.fromList(tripIList);
                     final Job<String, Trip> job = hazelcastInstance.getJobTracker(QUERY4).newJob(keyValueSource);
 
-                    final List<Map.Entry<String, List<Integer>>> result = job
+                    final List<Map.Entry<String, List<Long>>> result = job
                             .mapper(new NetAffluenceMapper(stations, params.getStartDate(), params.getEndDate()))
                             .reducer(new NetAffluenceReducerFactory())
                             .submit(new NetAffluenceCollator(stations, params.getStartDate(), params.getEndDate()))

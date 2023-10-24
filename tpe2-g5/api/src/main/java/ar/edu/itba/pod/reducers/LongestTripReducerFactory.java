@@ -25,8 +25,13 @@ public class LongestTripReducerFactory implements ReducerFactory<
 
         @Override
         public void reduce(Pair<LocalDateTime, Integer> pair) {
+            if (longestTrip == null) {
+                longestTrip = pair;
+                return;
+            }
+
             int cmp = pair.getOther().compareTo(longestTrip.getOther());
-            if (longestTrip == null || cmp < 0) {
+            if (cmp > 0) {
                 longestTrip = pair;
             } else if (cmp == 0) {
                 if (longestTrip.getOne().isAfter(pair.getOne())) {

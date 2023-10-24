@@ -11,16 +11,16 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @SuppressWarnings("deprecation")
-public class NetAffluenceReducerFactory implements ReducerFactory<String, Pair<Integer, LocalDateTime>, List<Integer>> {
+public class NetAffluenceReducerFactory implements ReducerFactory<String, Pair<Long, LocalDateTime>, List<Long>> {
 
     @Override
-    public Reducer<Pair<Integer, LocalDateTime>, List<Integer>> newReducer(String s) {
+    public Reducer<Pair<Long, LocalDateTime>, List<Long>> newReducer(String s) {
         return new QueryReducer();
     }
 
-    private static class QueryReducer extends Reducer<Pair<Integer, LocalDateTime>, List<Integer>> {
-        private List<Integer> netAffluenceList;
-        private Map<LocalDate, Integer> affluenceMapPerDay;
+    private static class QueryReducer extends Reducer<Pair<Long, LocalDateTime>, List<Long>> {
+        private List<Long> netAffluenceList;
+        private Map<LocalDate, Long> affluenceMapPerDay;
 
         @Override
         public void beginReduce() {
@@ -29,19 +29,19 @@ public class NetAffluenceReducerFactory implements ReducerFactory<String, Pair<I
         }
 
         @Override
-        public void reduce(Pair<Integer, LocalDateTime> pair) {
+        public void reduce(Pair<Long, LocalDateTime> pair) {
             LocalDate date = pair.getOther().toLocalDate();
-            affluenceMapPerDay.putIfAbsent(date, 0);
-            affluenceMapPerDay.merge(date, pair.getOne(), Integer::sum);
+            affluenceMapPerDay.putIfAbsent(date, 0L);
+            affluenceMapPerDay.merge(date, pair.getOne(), Long::sum);
         }
 
         @Override
-        public List<Integer> finalizeReduce() {
-            int positiveAffluence = 0;
-            int neutralAffluence = 0;
-            int negativeAffluence = 0;
+        public List<Long> finalizeReduce() {
+            long positiveAffluence = 0;
+            long neutralAffluence = 0;
+            long negativeAffluence = 0;
 
-            for (Integer affluence : affluenceMapPerDay.values()) {
+            for (Long affluence : affluenceMapPerDay.values()) {
                 if (affluence > 0) {
                     positiveAffluence++;
                 } else if (affluence < 0) {
