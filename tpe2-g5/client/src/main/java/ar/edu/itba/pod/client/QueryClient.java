@@ -1,28 +1,11 @@
 package ar.edu.itba.pod.client;
 
-import ar.edu.itba.pod.client.utils.DataLoader;
-import ar.edu.itba.pod.client.utils.QueryParams;
-import ar.edu.itba.pod.client.utils.QueryParser;
-import ar.edu.itba.pod.client.utils.ResultWriter;
-import ar.edu.itba.pod.collators.LongestTripCollator;
-import ar.edu.itba.pod.collators.NetAffluenceCollator;
-import ar.edu.itba.pod.collators.TopAverageDistanceStationsCollator;
-import ar.edu.itba.pod.collators.TripsBetweenStationsCollator;
-import ar.edu.itba.pod.combiners.LongestTripCombinerFactory;
-import ar.edu.itba.pod.combiners.NetAffluenceCombinerFactory;
-import ar.edu.itba.pod.combiners.TopAverageDistanceStationsCombinerFactory;
-import ar.edu.itba.pod.combiners.TripsBetweenStationsCombinerFactory;
-import ar.edu.itba.pod.mappers.LongestTripMapper;
-import ar.edu.itba.pod.mappers.NetAffluenceMapper;
-import ar.edu.itba.pod.mappers.TopAverageDistanceStationsMapper;
-import ar.edu.itba.pod.mappers.TripsBetweenStationsMapper;
-import ar.edu.itba.pod.models.Pair;
-import ar.edu.itba.pod.models.Station;
-import ar.edu.itba.pod.models.Trip;
-import ar.edu.itba.pod.reducers.LongestTripReducerFactory;
-import ar.edu.itba.pod.reducers.NetAffluenceReducerFactory;
-import ar.edu.itba.pod.reducers.TopAverageDistanceStationsReducerFactory;
-import ar.edu.itba.pod.reducers.TripsBetweenStationsReducerFactory;
+import ar.edu.itba.pod.client.utils.*;
+import ar.edu.itba.pod.collators.*;
+import ar.edu.itba.pod.combiners.*;
+import ar.edu.itba.pod.mappers.*;
+import ar.edu.itba.pod.models.*;
+import ar.edu.itba.pod.reducers.*;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.client.config.ClientNetworkConfig;
@@ -36,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
 
 @SuppressWarnings("deprecation")
 public class QueryClient {
