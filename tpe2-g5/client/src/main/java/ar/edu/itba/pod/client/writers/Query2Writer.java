@@ -15,7 +15,7 @@ public class Query2Writer implements DataFormatter<String, Double> {
     }
 
     @Override
-    public String getOuput() {
+    public String getOutput() {
         return "/query2.csv";
     }
 }

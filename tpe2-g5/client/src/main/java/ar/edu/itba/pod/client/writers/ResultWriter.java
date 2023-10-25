@@ -8,7 +8,7 @@ import java.util.Map;
 public class ResultWriter<K,V> {
 
     public void writeResult(String outPath, List<Map.Entry<K, V>> result, DataFormatter<K, V> formatter) {
-        try (PrintWriter writer = new PrintWriter(outPath + formatter.getOuput())) {
+        try (PrintWriter writer = new PrintWriter(outPath + formatter.getOutput())) {
             writer.println(formatter.getHeader());
             for (Map.Entry<K, V> r : result) {
                 writer.println(formatter.formatEntry(r.getKey(), r.getValue()));

@@ -18,7 +18,7 @@ public class Query3Writer implements DataFormatter<String, Pair<LocalDateTime, I
     }
 
     @Override
-    public String getOuput() {
+    public String getOutput() {
         return "/query3.csv";
     }
 }

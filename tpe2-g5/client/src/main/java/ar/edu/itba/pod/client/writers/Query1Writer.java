@@ -13,7 +13,7 @@ public class Query1Writer implements DataFormatter<String, Integer> {
     }
 
     @Override
-    public String getOuput() {
+    public String getOutput() {
         return "/query1.csv";
     }
 }

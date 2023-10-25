@@ -14,7 +14,7 @@ public class Query4Writer implements DataFormatter<String, List<Long>> {
     }
 
     @Override
-    public String getOuput() {
+    public String getOutput() {
         return "/query4.csv";
     }
 }
