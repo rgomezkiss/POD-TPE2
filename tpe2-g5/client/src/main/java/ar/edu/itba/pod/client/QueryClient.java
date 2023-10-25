@@ -8,6 +8,10 @@ import ar.edu.itba.pod.collators.LongestTripCollator;
 import ar.edu.itba.pod.collators.NetAffluenceCollator;
 import ar.edu.itba.pod.collators.TopAverageDistanceStationsCollator;
 import ar.edu.itba.pod.collators.TripsBetweenStationsCollator;
+import ar.edu.itba.pod.combiners.LongestTripCombinerFactory;
+import ar.edu.itba.pod.combiners.NetAffluenceCombinerFactory;
+import ar.edu.itba.pod.combiners.TopAverageDistanceStationsCombinerFactory;
+import ar.edu.itba.pod.combiners.TripsBetweenStationsCombinerFactory;
 import ar.edu.itba.pod.mappers.LongestTripMapper;
 import ar.edu.itba.pod.mappers.NetAffluenceMapper;
 import ar.edu.itba.pod.mappers.TopAverageDistanceStationsMapper;
@@ -32,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
 
 @SuppressWarnings("deprecation")
 public class QueryClient {
@@ -43,6 +48,7 @@ public class QueryClient {
     private static final String QUERY2 = "query2-g5";
     private static final String QUERY3 = "query3-g5";
     private static final String QUERY4 = "query4-g5";
+    private static final boolean WITH_COMBINER = false;
 
     public static void main(String[] args) {
         logger.info("Client Starting ...");
@@ -66,11 +72,21 @@ public class QueryClient {
                     final KeyValueSource<String, Trip> keyValueSource = KeyValueSource.fromList(tripIList);
                     final Job<String, Trip> job = hazelcastInstance.getJobTracker(QUERY1).newJob(keyValueSource);
 
-                    final List<Map.Entry<String, Integer>> result = job
-                            .mapper(new TripsBetweenStationsMapper(stations))
-                            .reducer(new TripsBetweenStationsReducerFactory())
-                            .submit(new TripsBetweenStationsCollator(stations))
-                            .get();
+                    List<Map.Entry<String, Integer>> result;
+                    if (WITH_COMBINER) {
+                        result = job
+                                .mapper(new TripsBetweenStationsMapper(stations))
+                                .combiner(new TripsBetweenStationsCombinerFactory())
+                                .reducer(new TripsBetweenStationsReducerFactory())
+                                .submit(new TripsBetweenStationsCollator(stations))
+                                .get();
+                    } else {
+                       result = job
+                                .mapper(new TripsBetweenStationsMapper(stations))
+                                .reducer(new TripsBetweenStationsReducerFactory())
+                                .submit(new TripsBetweenStationsCollator(stations))
+                                .get();
+                    }
 
                     ResultWriter.writeQuery1Result(params.getOutPath() , result);
                 }
@@ -79,11 +95,21 @@ public class QueryClient {
                     final KeyValueSource<String, Trip> keyValueSource = KeyValueSource.fromList(tripIList);
                     final Job<String, Trip> job = hazelcastInstance.getJobTracker(QUERY2).newJob(keyValueSource);
 
-                    final List<Map.Entry<String, Double>> result = job
-                            .mapper(new TopAverageDistanceStationsMapper(stations))
-                            .reducer(new TopAverageDistanceStationsReducerFactory())
-                            .submit(new TopAverageDistanceStationsCollator(stations, params.getN()))
-                            .get();
+                    List<Map.Entry<String, Double>> result;
+                    if (WITH_COMBINER) {
+                        result = job
+                                .mapper(new TopAverageDistanceStationsMapper(stations))
+                                .combiner(new TopAverageDistanceStationsCombinerFactory())
+                                .reducer(new TopAverageDistanceStationsReducerFactory())
+                                .submit(new TopAverageDistanceStationsCollator(stations, params.getN()))
+                                .get();
+                    } else {
+                        result = job
+                                .mapper(new TopAverageDistanceStationsMapper(stations))
+                                .reducer(new TopAverageDistanceStationsReducerFactory())
+                                .submit(new TopAverageDistanceStationsCollator(stations, params.getN()))
+                                .get();
+                    }
 
                     ResultWriter.writeQuery2Result(params.getOutPath(), result);
                 }
@@ -92,11 +118,21 @@ public class QueryClient {
                     final KeyValueSource<String, Trip> keyValueSource = KeyValueSource.fromList(tripIList);
                     final Job<String, Trip> job = hazelcastInstance.getJobTracker(QUERY3).newJob(keyValueSource);
 
-                    final List<Map.Entry<String, Pair<LocalDateTime, Integer>>> result = job
-                            .mapper(new LongestTripMapper(stations))
-                            .reducer(new LongestTripReducerFactory())
-                            .submit(new LongestTripCollator(stations))
-                            .get();
+                    List<Map.Entry<String, Pair<LocalDateTime, Integer>>> result;
+                    if (WITH_COMBINER) {
+                        result = job
+                                .mapper(new LongestTripMapper(stations))
+                                .combiner(new LongestTripCombinerFactory())
+                                .reducer(new LongestTripReducerFactory())
+                                .submit(new LongestTripCollator(stations))
+                                .get();
+                    } else {
+                        result = job
+                                .mapper(new LongestTripMapper(stations))
+                                .reducer(new LongestTripReducerFactory())
+                                .submit(new LongestTripCollator(stations))
+                                .get();
+                    }
 
                     ResultWriter.writeQuery3Result(params.getOutPath(), result);
 
@@ -106,11 +142,21 @@ public class QueryClient {
                     final KeyValueSource<String, Trip> keyValueSource = KeyValueSource.fromList(tripIList);
                     final Job<String, Trip> job = hazelcastInstance.getJobTracker(QUERY4).newJob(keyValueSource);
 
-                    final List<Map.Entry<String, List<Long>>> result = job
-                            .mapper(new NetAffluenceMapper(stations, params.getStartDate(), params.getEndDate()))
-                            .reducer(new NetAffluenceReducerFactory())
-                            .submit(new NetAffluenceCollator(stations, params.getStartDate(), params.getEndDate()))
-                            .get();
+                    List<Map.Entry<String, List<Long>>> result;
+                    if (WITH_COMBINER) {
+                        result = job
+                                .mapper(new NetAffluenceMapper(stations, params.getStartDate(), params.getEndDate()))
+//                                .combiner(new NetAffluenceCombinerFactory())
+                                .reducer(new NetAffluenceReducerFactory())
+                                .submit(new NetAffluenceCollator(stations, params.getStartDate(), params.getEndDate()))
+                                .get();
+                    } else {
+                        result = job
+                                .mapper(new NetAffluenceMapper(stations, params.getStartDate(), params.getEndDate()))
+                                .reducer(new NetAffluenceReducerFactory())
+                                .submit(new NetAffluenceCollator(stations, params.getStartDate(), params.getEndDate()))
+                                .get();
+                    }
 
                     ResultWriter.writeQuery4Result(params.getOutPath(), result);
                 }
@@ -120,8 +166,10 @@ public class QueryClient {
             logger.error(e.getMessage());
             e.printStackTrace();
             logger.info("Error");
-        }
-        finally {
+        } finally {
+            tripIList.clear();
+            stations.clear();
+            hazelcastInstance.getDistributedObjects().forEach(DistributedObject::destroy);
             HazelcastClient.shutdownAll();
             logger.info("Finished query");
         }

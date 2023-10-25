@@ -33,6 +33,5 @@ public class TopAverageDistanceStationsReducerFactory implements ReducerFactory<
             return averageDistance / count;
         }
 
-
     }
 }
