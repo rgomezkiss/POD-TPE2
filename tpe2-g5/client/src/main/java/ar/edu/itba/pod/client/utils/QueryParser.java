@@ -36,7 +36,7 @@ public class QueryParser implements Parser<QueryParams> {
         options.addRequiredOption(QUERY, QUERY, true, "Query requested");
     }
 
-    // -Daddresses='xx.xx.xx.xx:XXXX;yy.yy.yy.yy:YYYY' -DinPath=XX -DoutPath=YY -Dn=n -DstartDate=... -DendDate=... -Dquery=x
+    // -Daddresses='xx.xx.xx.xx:XXXX;yy.yy.yy.yy:YYYY' -DinPath=XX -DoutPath=YY -Dn=n -DstartDate=... -DendDate=... -git Dquery=x
     @Override
     public QueryParams parse(String[] args) {
         try {

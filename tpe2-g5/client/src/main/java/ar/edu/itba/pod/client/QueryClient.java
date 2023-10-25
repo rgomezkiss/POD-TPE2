@@ -1,6 +1,7 @@
 package ar.edu.itba.pod.client;
 
 import ar.edu.itba.pod.client.utils.*;
+import ar.edu.itba.pod.client.writers.*;
 import ar.edu.itba.pod.collators.*;
 import ar.edu.itba.pod.combiners.*;
 import ar.edu.itba.pod.mappers.*;
@@ -16,7 +17,6 @@ import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -97,7 +97,8 @@ public class QueryClient {
                                 .get();
                     }
 
-                    ResultWriter.writeQuery1Result(params.getOutPath() , result);
+                    ResultWriter<String, Integer> query1Writer = new ResultWriter<>();
+                    query1Writer.writeResult(params.getOutPath(), result, new Query1Writer());
                 }
 
                 case 2 -> {
@@ -121,7 +122,8 @@ public class QueryClient {
                                 .get();
                     }
 
-                    ResultWriter.writeQuery2Result(params.getOutPath(), result);
+                    ResultWriter<String, Double> query2Writer = new ResultWriter<>();
+                    query2Writer.writeResult(params.getOutPath(), result, new Query2Writer());
                 }
 
                 case 3 -> {
@@ -144,7 +146,8 @@ public class QueryClient {
                                 .get();
                     }
 
-                    ResultWriter.writeQuery3Result(params.getOutPath(), result);
+                    ResultWriter<String, Pair<LocalDateTime, Integer>> query3Writer = new ResultWriter<>();
+                    query3Writer.writeResult(params.getOutPath(), result, new Query3Writer());
 
                 }
 
@@ -168,7 +171,8 @@ public class QueryClient {
                                 .get();
                     }
 
-                    ResultWriter.writeQuery4Result(params.getOutPath(), result);
+                    ResultWriter<String, List<Long>> query4Writer = new ResultWriter<>();
+                    query4Writer.writeResult(params.getOutPath(), result, new Query4Writer());
                 }
             }
         } catch (Exception e) {
