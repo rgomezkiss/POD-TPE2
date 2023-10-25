@@ -42,7 +42,7 @@ public class TripsBetweenStationsCollator implements Collator<
         sortedList.sort((entry1, entry2) -> {
             int cmp = entry2.getValue().compareTo(entry1.getValue());
             if (cmp == 0) {
-                cmp = entry1.getKey().compareTo(entry2.getKey());
+                cmp = entry1.getKey().toLowerCase().compareTo(entry2.getKey().toLowerCase());
             }
             return cmp;
         });

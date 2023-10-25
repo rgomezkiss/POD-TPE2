@@ -35,5 +35,6 @@ public class Server {
 //                .setEnabled(true);
 //        config.setManagementCenterConfig(managementCenterConfig);
 
+        logger.info("Server started");
     }
 }

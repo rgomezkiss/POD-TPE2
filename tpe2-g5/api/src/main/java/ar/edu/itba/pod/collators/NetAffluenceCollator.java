@@ -31,7 +31,7 @@ public class NetAffluenceCollator implements Collator<Map.Entry<String, List<Lon
     public List<Map.Entry<String, List<Long>>> collate(Iterable<Map.Entry<String, List<Long>>> iterable) {
         final Map<String, List<Long>> map = new HashMap<>();
 
-        final long totalDays =  ChronoUnit.DAYS.between(startDate, endDate);
+        final long totalDays =  ChronoUnit.DAYS.between(startDate, endDate.plusDays(1));
 
         for (Map.Entry<String, List<Long>> entry : iterable) {
             final String stationName = entry.getKey();
@@ -48,7 +48,7 @@ public class NetAffluenceCollator implements Collator<Map.Entry<String, List<Lon
         sortedList.sort((entry1, entry2) -> {
             int cmp = entry2.getValue().get(0).compareTo(entry1.getValue().get(0));
             if (cmp == 0) {
-                cmp = entry1.getKey().compareTo(entry2.getKey());
+                cmp = entry1.getKey().toLowerCase().compareTo(entry2.getKey().toLowerCase());
             }
             return cmp;
         });

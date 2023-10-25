@@ -49,6 +49,7 @@ public class DataLoader {
 
     public static void readBikes(final String path, final IList<Trip> tripsIList) {
         List<Trip> trips = null;
+        int maxSize = 100000;
 
         final String bikesPath = path + BIKES_CSV;
 
@@ -65,6 +66,7 @@ public class DataLoader {
                                     Integer.parseInt(data[4])
                             )
                     )
+                    .limit(maxSize)
                     .collect(Collectors.toList());
         } catch (IOException e) {
             logger.error("Error while reading file: {}", e.getMessage());

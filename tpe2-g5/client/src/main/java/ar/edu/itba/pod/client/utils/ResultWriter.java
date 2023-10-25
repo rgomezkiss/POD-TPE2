@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -28,7 +29,8 @@ public class ResultWriter {
         try (PrintWriter writer = new PrintWriter(outPath + "/query2.csv")) {
             writer.println( "station;avg_distance");
             for (Map.Entry<String, Double> r: result) {
-                writer.println(r.getKey() + ";" + r.getValue());
+                String formattedValue = String.format(Locale.US, "%.2f", r.getValue()); // Formato con dos decimales
+                writer.println(r.getKey() + ";" + formattedValue);
             }
         } catch (IOException e) {
             e.printStackTrace();

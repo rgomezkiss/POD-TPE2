@@ -16,7 +16,12 @@ import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +37,9 @@ public class QueryClient {
     private static final String QUERY4 = "query4-g5";
     private static final boolean WITH_COMBINER = false;
 
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+
+
     public static void main(String[] args) {
         logger.info("Client Starting ...");
 
@@ -39,14 +47,33 @@ public class QueryClient {
         final QueryParams params = new QueryParser().parse(args);
         logger.info("Finished Argument Parsing");
 
+        PrintWriter logWriter = null;
+        try {
+            logWriter = new PrintWriter(new FileWriter(params.getOutPath() + "/time" + params.getQuery() + ".txt"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         final HazelcastInstance hazelcastInstance = getHazelClientInstance(params.getServerAddresses());
 
         logger.info("Data Parsing ...");
+        logWriter.println(String.format("%s INFO [main] %s (%s:%d) - Inicio de la lectura del archivo",
+                LocalDateTime.now().format(FORMATTER), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                QueryClient.class.getName(), Thread.currentThread().getStackTrace()[1].getLineNumber()));
+
         final List<Station> stations = DataLoader.readStations(params.getInPath());
         final IList<Trip> tripIList = hazelcastInstance.getList(BIKES_LIST);
         tripIList.clear();
         DataLoader.readBikes(params.getInPath(), tripIList);
+
         logger.info("Finished Data Parsing");
+        logWriter.println(String.format("%s INFO [main] %s (%s:%d) - Fin de lectura del archivo",
+                LocalDateTime.now().format(FORMATTER), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                QueryClient.class.getName(), Thread.currentThread().getStackTrace()[1].getLineNumber()));
+
+        logWriter.println(String.format("%s INFO [main] %s (%s:%d) - Inicio del trabajo map/reduce",
+                LocalDateTime.now().format(FORMATTER), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                QueryClient.class.getName(), Thread.currentThread().getStackTrace()[1].getLineNumber()));
 
         try {
             switch(params.getQuery()) {
@@ -78,6 +105,7 @@ public class QueryClient {
                     final Job<String, Trip> job = hazelcastInstance.getJobTracker(QUERY2).newJob(keyValueSource);
 
                     List<Map.Entry<String, Double>> result;
+
                     if (WITH_COMBINER) {
                         result = job
                                 .mapper(new TopAverageDistanceStationsMapper(stations))
@@ -149,6 +177,10 @@ public class QueryClient {
             e.printStackTrace();
             logger.info("Error");
         } finally {
+            logWriter.println(String.format("%s INFO [main] %s (%s:%d) - Fin del trabajo map/reduce",
+                    LocalDateTime.now().format(FORMATTER), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    QueryClient.class.getName(), Thread.currentThread().getStackTrace()[1].getLineNumber()));
+
             tripIList.clear();
             stations.clear();
             hazelcastInstance.getDistributedObjects().forEach(DistributedObject::destroy);
