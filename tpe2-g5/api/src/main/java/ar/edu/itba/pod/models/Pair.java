@@ -7,7 +7,6 @@ import com.hazelcast.nio.serialization.DataSerializable;
 import java.io.IOException;
 import java.util.Objects;
 
-//TODO: check if objects also have to be serializable
 public class Pair<T, V> implements DataSerializable {
     private T value1;
     private V value2;

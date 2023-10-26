@@ -14,7 +14,7 @@ import java.util.List;
 
 public class QueryParser implements Parser<QueryParams> {
 
-    private final Logger logger = LoggerFactory.getLogger(QueryParser.class);
+//    private final Logger logger = LoggerFactory.getLogger(QueryParser.class);
     private final CommandLineParser parser = new DefaultParser();
     private final Options options = new Options();
     private final static String SERVER_ADDRESSES = "Daddresses";
@@ -69,7 +69,7 @@ public class QueryParser implements Parser<QueryParams> {
 
         } catch (ParseException e) {
             System.out.println("Error parsing command line arguments");
-            logger.error("Error parsing command line arguments");
+//            logger.error("Error parsing command line arguments");
             return null;
         }
         return null;

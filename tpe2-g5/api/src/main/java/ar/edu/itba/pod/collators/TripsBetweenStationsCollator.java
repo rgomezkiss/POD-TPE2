@@ -2,6 +2,9 @@ package ar.edu.itba.pod.collators;
 
 import ar.edu.itba.pod.models.Pair;
 import ar.edu.itba.pod.models.Station;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.HazelcastInstanceAware;
+import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.Collator;
 
 import java.util.ArrayList;
@@ -15,10 +18,8 @@ public class TripsBetweenStationsCollator implements Collator<
         List<Map.Entry<String, Integer>>> {
     private final Map<Integer, Station> stationMap = new HashMap<>();
 
-    public TripsBetweenStationsCollator(List<Station> stations) {
-        for (Station s : stations) {
-            stationMap.put(s.getPk(), s);
-        }
+    public TripsBetweenStationsCollator(IMap<Integer, Station> stations) {
+        stationMap.putAll(stations);
     }
 
     @Override
@@ -50,4 +51,3 @@ public class TripsBetweenStationsCollator implements Collator<
         return sortedList;
     }
 }
-

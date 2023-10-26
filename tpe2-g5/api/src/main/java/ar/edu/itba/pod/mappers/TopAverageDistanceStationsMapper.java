@@ -2,6 +2,7 @@ package ar.edu.itba.pod.mappers;
 
 import ar.edu.itba.pod.models.Station;
 import ar.edu.itba.pod.models.Trip;
+import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;
 
@@ -14,11 +15,10 @@ public class TopAverageDistanceStationsMapper implements Mapper<Integer, Trip, I
 
     private final Map<Integer, Station> stationMap = new HashMap<>();
 
-    public TopAverageDistanceStationsMapper(List<Station> stations) {
-        for (Station s : stations) {
-            stationMap.put(s.getPk(), s);
-        }
+    public TopAverageDistanceStationsMapper(IMap<Integer, Station> stations) {
+        stationMap.putAll(stations);
     }
+
 
     @Override
     public void map(Integer key, Trip trip, Context<Integer, Double> context) {

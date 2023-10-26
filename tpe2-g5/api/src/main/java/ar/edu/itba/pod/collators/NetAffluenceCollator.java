@@ -1,6 +1,7 @@
 package ar.edu.itba.pod.collators;
 
 import ar.edu.itba.pod.models.Station;
+import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.Collator;
 
 import java.time.LocalDate;
@@ -19,10 +20,8 @@ public class NetAffluenceCollator implements Collator<Map.Entry<String, List<Lon
     private final LocalDate startDate;
     private final LocalDate endDate;
 
-    public NetAffluenceCollator(List<Station> stations, LocalDate startDate, LocalDate endDate) {
-        for (Station s : stations) {
-            stationMap.put(s.getPk(), s);
-        }
+    public NetAffluenceCollator(IMap<Integer, Station> stations, LocalDate startDate, LocalDate endDate) {
+        this.stationMap.putAll(stations);
         this.startDate = startDate;
         this.endDate = endDate;
     }

@@ -1,6 +1,7 @@
 package ar.edu.itba.pod.collators;
 
 import ar.edu.itba.pod.models.Station;
+import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.Collator;
 
 import java.util.ArrayList;
@@ -14,12 +15,11 @@ public class TopAverageDistanceStationsCollator implements Collator<Map.Entry<In
     private final Map<Integer, Station> stationMap = new HashMap<>();
     private final int N;
 
-    public TopAverageDistanceStationsCollator(List<Station> stations, int N) {
-        for (Station s : stations) {
-            stationMap.put(s.getPk(), s);
-        }
+    public TopAverageDistanceStationsCollator(IMap<Integer, Station> stations, int N) {
+        stationMap.putAll(stations);
         this.N = N;
     }
+
 
     @Override
     public List<Map.Entry<String, Double>> collate(Iterable<Map.Entry<Integer, Double>> iterable) {

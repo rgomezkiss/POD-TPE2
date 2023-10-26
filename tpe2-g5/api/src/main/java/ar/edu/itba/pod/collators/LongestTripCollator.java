@@ -2,6 +2,7 @@ package ar.edu.itba.pod.collators;
 
 import ar.edu.itba.pod.models.Pair;
 import ar.edu.itba.pod.models.Station;
+import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.Collator;
 
 import java.time.LocalDateTime;
@@ -17,10 +18,8 @@ public class LongestTripCollator implements Collator<
         List<Map.Entry<String, Pair<LocalDateTime, Integer>>>> {
     private final Map<Integer, Station> stationMap = new HashMap<>();
 
-    public LongestTripCollator(List<Station> stations) {
-        for (Station s : stations) {
-            stationMap.put(s.getPk(), s);
-        }
+    public LongestTripCollator(IMap<Integer, Station> stations) {
+        stationMap.putAll(stations);
     }
 
     @Override

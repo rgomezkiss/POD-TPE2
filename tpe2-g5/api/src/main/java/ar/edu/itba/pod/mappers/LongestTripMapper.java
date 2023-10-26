@@ -3,6 +3,7 @@ package ar.edu.itba.pod.mappers;
 import ar.edu.itba.pod.models.Pair;
 import ar.edu.itba.pod.models.Station;
 import ar.edu.itba.pod.models.Trip;
+import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;
 
@@ -15,11 +16,10 @@ import java.util.Map;
 public class LongestTripMapper implements Mapper<Integer, Trip, Pair<Integer, Integer>, Pair<LocalDateTime, Integer>> {
     private final Map<Integer, Station> stationMap = new HashMap<>();
 
-    public LongestTripMapper(List<Station> stations) {
-        for (Station s : stations) {
-            stationMap.put(s.getPk(), s);
-        }
+    public LongestTripMapper(IMap<Integer, Station> stations) {
+        stationMap.putAll(stations);
     }
+
 
     @Override
     public void map(Integer key, Trip trip, Context<Pair<Integer, Integer>, Pair<LocalDateTime, Integer>> context) {

@@ -3,6 +3,7 @@ package ar.edu.itba.pod.mappers;
 import ar.edu.itba.pod.models.Pair;
 import ar.edu.itba.pod.models.Station;
 import ar.edu.itba.pod.models.Trip;
+import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;
 
@@ -18,10 +19,8 @@ public class NetAffluenceMapper implements Mapper<Integer, Trip, String, Pair<Lo
     private final LocalDate startDate;
     private final LocalDate endDate;
 
-    public NetAffluenceMapper(List<Station> stations, LocalDate startDate, LocalDate endDate) {
-        for (Station s : stations) {
-            stationMap.put(s.getPk(), s);
-        }
+    public NetAffluenceMapper(IMap<Integer, Station> stations, LocalDate startDate, LocalDate endDate) {
+        this.stationMap.putAll(stations);
         this.startDate = startDate;
         this.endDate = endDate;
     }

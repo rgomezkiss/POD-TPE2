@@ -27,7 +27,8 @@ public class QueryClient {
     private static Logger logger;
     private static final String HZ_CLIENT_NAME = "g5";
     private static final String HZ_CLIENT_PASS = "g5-pass";
-    private static final String BIKES_LIST = "g5-bikes-map";
+    private static final String BIKES_MAP = "g5-bikes-map";
+    private static final String STATIONS_MAP = "g5-stations-map";
     private static final String QUERY1 = "query1-g5";
     private static final String QUERY2 = "query2-g5";
     private static final String QUERY3 = "query3-g5";
@@ -35,11 +36,7 @@ public class QueryClient {
 
     private static final int MAX_SIZE = 100000;
 
-//    private static final boolean WITH_COMBINER = true;
     private static final boolean WITH_COMBINER = false;
-
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-
 
     public static void main(String[] args) {
         final QueryParams params = new QueryParser().parse(args);
@@ -50,11 +47,11 @@ public class QueryClient {
 
         logger.info("Inicio de la lectura del archivo");
 
-        // Todo: change distributed
-        final List<Station> stations = DataLoader.readStations(params.getInPath());
+        final IMap<Integer, Station> stationIMap = hazelcastInstance.getMap(STATIONS_MAP);
+        stationIMap.clear();
+        DataLoader.readStations(params.getInPath(), stationIMap);
 
-
-        final IMap<Integer, Trip> tripIMap = hazelcastInstance.getMap(BIKES_LIST);
+        final IMap<Integer, Trip> tripIMap = hazelcastInstance.getMap(BIKES_MAP);
         tripIMap.clear();
         DataLoader.readBikes(params.getInPath(), tripIMap, MAX_SIZE);
 
@@ -71,16 +68,16 @@ public class QueryClient {
                     List<Map.Entry<String, Integer>> result;
                     if (WITH_COMBINER) {
                         result = job
-                                .mapper(new TripsBetweenStationsMapper(stations))
+                                .mapper(new TripsBetweenStationsMapper(stationIMap))
                                 .combiner(new TripsBetweenStationsCombinerFactory())
                                 .reducer(new TripsBetweenStationsReducerFactory())
-                                .submit(new TripsBetweenStationsCollator(stations))
+                                .submit(new TripsBetweenStationsCollator(stationIMap))
                                 .get();
                     } else {
                        result = job
-                                .mapper(new TripsBetweenStationsMapper(stations))
+                                .mapper(new TripsBetweenStationsMapper(stationIMap))
                                 .reducer(new TripsBetweenStationsReducerFactory())
-                                .submit(new TripsBetweenStationsCollator(stations))
+                                .submit(new TripsBetweenStationsCollator(stationIMap))
                                 .get();
                     }
 
@@ -96,16 +93,16 @@ public class QueryClient {
 
                     if (WITH_COMBINER) {
                         result = job
-                                .mapper(new TopAverageDistanceStationsMapper(stations))
+                                .mapper(new TopAverageDistanceStationsMapper(stationIMap))
                                 .combiner(new TopAverageDistanceStationsCombinerFactory())
                                 .reducer(new TopAverageDistanceStationsReducerFactory())
-                                .submit(new TopAverageDistanceStationsCollator(stations, params.getN()))
+                                .submit(new TopAverageDistanceStationsCollator(stationIMap, params.getN()))
                                 .get();
                     } else {
                         result = job
-                                .mapper(new TopAverageDistanceStationsMapper(stations))
+                                .mapper(new TopAverageDistanceStationsMapper(stationIMap))
                                 .reducer(new TopAverageDistanceStationsReducerFactory())
-                                .submit(new TopAverageDistanceStationsCollator(stations, params.getN()))
+                                .submit(new TopAverageDistanceStationsCollator(stationIMap, params.getN()))
                                 .get();
                     }
 
@@ -120,16 +117,16 @@ public class QueryClient {
                     List<Map.Entry<String, Pair<LocalDateTime, Integer>>> result;
                     if (WITH_COMBINER) {
                         result = job
-                                .mapper(new LongestTripMapper(stations))
+                                .mapper(new LongestTripMapper(stationIMap))
                                 .combiner(new LongestTripCombinerFactory())
                                 .reducer(new LongestTripReducerFactory())
-                                .submit(new LongestTripCollator(stations))
+                                .submit(new LongestTripCollator(stationIMap))
                                 .get();
                     } else {
                         result = job
-                                .mapper(new LongestTripMapper(stations))
+                                .mapper(new LongestTripMapper(stationIMap))
                                 .reducer(new LongestTripReducerFactory())
-                                .submit(new LongestTripCollator(stations))
+                                .submit(new LongestTripCollator(stationIMap))
                                 .get();
                     }
 
@@ -145,16 +142,16 @@ public class QueryClient {
                     List<Map.Entry<String, List<Long>>> result;
                     if (WITH_COMBINER) {
                         result = job
-                                .mapper(new NetAffluenceMapper(stations, params.getStartDate(), params.getEndDate()))
+                                .mapper(new NetAffluenceMapper(stationIMap, params.getStartDate(), params.getEndDate()))
 //                                .combiner(new NetAffluenceCombinerFactory())
                                 .reducer(new NetAffluenceReducerFactory())
-                                .submit(new NetAffluenceCollator(stations, params.getStartDate(), params.getEndDate()))
+                                .submit(new NetAffluenceCollator(stationIMap, params.getStartDate(), params.getEndDate()))
                                 .get();
                     } else {
                         result = job
-                                .mapper(new NetAffluenceMapper(stations, params.getStartDate(), params.getEndDate()))
+                                .mapper(new NetAffluenceMapper(stationIMap, params.getStartDate(), params.getEndDate()))
                                 .reducer(new NetAffluenceReducerFactory())
-                                .submit(new NetAffluenceCollator(stations, params.getStartDate(), params.getEndDate()))
+                                .submit(new NetAffluenceCollator(stationIMap, params.getStartDate(), params.getEndDate()))
                                 .get();
                     }
 
@@ -170,7 +167,7 @@ public class QueryClient {
         } finally {
             logger.info("Fin del trabajo map/reduce");
             tripIMap.clear();
-            stations.clear();
+            stationIMap.clear();
             hazelcastInstance.getDistributedObjects().forEach(DistributedObject::destroy);
             HazelcastClient.shutdownAll();
         }

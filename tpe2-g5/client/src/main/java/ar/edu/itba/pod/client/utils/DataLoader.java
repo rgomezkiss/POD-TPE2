@@ -2,6 +2,7 @@ package ar.edu.itba.pod.client.utils;
 
 import ar.edu.itba.pod.models.Station;
 import ar.edu.itba.pod.models.Trip;
+import com.hazelcast.core.IList;
 import com.hazelcast.core.IMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,8 +25,8 @@ public class DataLoader {
     private final static String BIKES_CSV = "/bikes.csv";
     private final static DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public static List<Station> readStations(String path) {
-        List<Station> stations = null;
+    public static void readStations(String path, final IMap<Integer, Station> stationsIMap) {
+        Map<Integer, Station> stations = new HashMap<>();
 
         final String stationsPath = path + STATIONS_CSV;
 
@@ -33,20 +34,21 @@ public class DataLoader {
             stations = lines
                     .skip(1)
                     .map(line -> line.split(";"))
-                    .map(data ->
-                            new Station(
+                    .collect(Collectors.toMap(
+                            data -> Integer.parseInt(data[0]),
+                            data -> new Station(
                                     Integer.parseInt(data[0]),
                                     data[1],
                                     Double.parseDouble(data[2]),
                                     Double.parseDouble(data[3])
                             )
-                    )
-                    .collect(Collectors.toList());
+                            )
+                    );
         } catch (IOException e) {
             logger.error("Error while reading file: {}", e.getMessage());
         }
 
-        return stations;
+        stationsIMap.putAll(stations);
     }
 
     public static void readBikes(final String path, final IMap<Integer, Trip> tripsIMap, int maxSize) {
