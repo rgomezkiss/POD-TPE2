@@ -78,6 +78,8 @@ public class QueryClient {
                                 .get();
                     }
 
+                    logger.info("Fin del trabajo map/reduce");
+
                     ResultWriter<String, Integer> query1Writer = new ResultWriter<>();
                     query1Writer.writeResult(params.getOutPath(), result, new Query1Writer());
                 }
@@ -103,6 +105,8 @@ public class QueryClient {
                                 .get();
                     }
 
+                    logger.info("Fin del trabajo map/reduce");
+
                     ResultWriter<String, Double> query2Writer = new ResultWriter<>();
                     query2Writer.writeResult(params.getOutPath(), result, new Query2Writer());
                 }
@@ -126,6 +130,8 @@ public class QueryClient {
                                 .submit(new LongestTripCollator(stationIMap))
                                 .get();
                     }
+
+                    logger.info("Fin del trabajo map/reduce");
 
                     ResultWriter<String, Pair<LocalDateTime, Integer>> query3Writer = new ResultWriter<>();
                     query3Writer.writeResult(params.getOutPath(), result, new Query3Writer());
@@ -152,6 +158,8 @@ public class QueryClient {
                                 .get();
                     }
 
+                    logger.info("Fin del trabajo map/reduce");
+
                     ResultWriter<String, List<Long>> query4Writer = new ResultWriter<>();
                     query4Writer.writeResult(params.getOutPath(), result, new Query4Writer());
                 }
@@ -161,7 +169,6 @@ public class QueryClient {
             logger.error(e.getMessage());
             e.printStackTrace();
         } finally {
-            logger.info("Fin del trabajo map/reduce");
             tripIMap.clear();
             stationIMap.clear();
             hazelcastInstance.getDistributedObjects().forEach(DistributedObject::destroy);
