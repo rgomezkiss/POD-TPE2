@@ -32,12 +32,11 @@ public class QueryClient {
     private static final String QUERY2 = "query2-g5";
     private static final String QUERY3 = "query3-g5";
     private static final String QUERY4 = "query4-g5";
-    private static final int MAX_SIZE = 500000;
+    private static final int MAX_SIZE = 200000;
     private static final boolean WITH_COMBINER = false;
 
     public static void main(String[] args) {
         final QueryParams params = new QueryParser().parse(args);
-        System.out.println(params);
 
         setUpLogger(params.getOutPath() + "/time" + params.getQuery() + ".txt");
 
