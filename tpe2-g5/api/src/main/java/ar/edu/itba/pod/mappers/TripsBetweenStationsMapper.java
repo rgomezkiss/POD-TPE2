@@ -8,12 +8,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.HazelcastInstanceAware;
 import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;
 
 @SuppressWarnings("deprecation")
-public class TripsBetweenStationsMapper implements Mapper<String, Trip, Pair<Integer, Integer>, Integer> {
+public class TripsBetweenStationsMapper implements Mapper<Integer, Trip, Pair<Integer, Integer>, Integer>, HazelcastInstanceAware {
     private final Map<Integer, Station> stationMap = new HashMap<>();
+    HazelcastInstance hazelcastInstance;
 
     public TripsBetweenStationsMapper(List<Station> stations) {
         for (Station s : stations) {
@@ -22,11 +25,16 @@ public class TripsBetweenStationsMapper implements Mapper<String, Trip, Pair<Int
     }
 
     @Override
-    public void map(String string, Trip trip, Context<Pair<Integer, Integer>, Integer> context) {
+    public void map(Integer key, Trip trip, Context<Pair<Integer, Integer>, Integer> context) {
         if (stationMap.containsKey(trip.getStartStation()) && stationMap.containsKey(trip.getEndStation())) {
             if (trip.getEndStation() != trip.getStartStation()) {
                 context.emit(new Pair<>(trip.getStartStation(), trip.getEndStation()), 1);
             }
         }
+    }
+
+    @Override
+    public void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
+        this.hazelcastInstance = hazelcastInstance;
     }
 }

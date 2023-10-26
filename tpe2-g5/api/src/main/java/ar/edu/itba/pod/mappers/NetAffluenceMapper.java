@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("deprecation")
-public class NetAffluenceMapper implements Mapper<String, Trip, String, Pair<Long, LocalDateTime>> {
+public class NetAffluenceMapper implements Mapper<Integer, Trip, String, Pair<Long, LocalDateTime>> {
     private final Map<Integer, Station> stationMap = new HashMap<>();
     private final LocalDate startDate;
     private final LocalDate endDate;
@@ -28,7 +28,7 @@ public class NetAffluenceMapper implements Mapper<String, Trip, String, Pair<Lon
 
     //TODO: check inclusión de endDate hasta 23:59
     @Override
-    public void map(String s, Trip trip, Context<String, Pair<Long, LocalDateTime>> context) {
+    public void map(Integer key, Trip trip, Context<String, Pair<Long, LocalDateTime>> context) {
         if (stationMap.containsKey(trip.getStartStation()) && stationMap.containsKey(trip.getEndStation())) {
             if (trip.getStartDate().isAfter(startDate.atStartOfDay()) && trip.getEndDate().isBefore(endDate.atTime(23, 59))) {
                 final Station startStation = stationMap.get(trip.getStartStation());

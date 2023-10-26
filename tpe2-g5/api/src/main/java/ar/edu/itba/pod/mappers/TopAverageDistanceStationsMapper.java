@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("deprecation")
-public class TopAverageDistanceStationsMapper implements Mapper<String, Trip, Integer, Double> {
+public class TopAverageDistanceStationsMapper implements Mapper<Integer, Trip, Integer, Double> {
 
     private final Map<Integer, Station> stationMap = new HashMap<>();
 
@@ -21,7 +21,7 @@ public class TopAverageDistanceStationsMapper implements Mapper<String, Trip, In
     }
 
     @Override
-    public void map(String s, Trip trip, Context<Integer, Double> context) {
+    public void map(Integer key, Trip trip, Context<Integer, Double> context) {
         if (stationMap.containsKey(trip.getStartStation()) && stationMap.containsKey(trip.getEndStation())) {
             if (trip.getEndStation() != trip.getStartStation() && trip.getIsMember() == 1) {
                 final Station startStation = stationMap.get(trip.getStartStation());

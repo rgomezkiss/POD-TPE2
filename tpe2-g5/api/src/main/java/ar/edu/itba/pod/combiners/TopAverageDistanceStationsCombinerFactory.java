@@ -12,18 +12,24 @@ public class TopAverageDistanceStationsCombinerFactory implements CombinerFactor
     }
 
     private static class DistanceCombiner extends Combiner<Double, Double> {
+        private Double averageDistance = 0.0;
+        private int count = 0;
 
         @Override
         public void combine(Double distance) {
+            averageDistance += distance;
+            count++;
         }
 
         @Override
         public Double finalizeChunk() {
-            return 0.0;
+            return averageDistance / count;
         }
 
         @Override
         public void reset() {
+            averageDistance = 0.0;
+            count = 0;
         }
     }
 }

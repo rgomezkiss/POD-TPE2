@@ -2,6 +2,7 @@ package ar.edu.itba.pod.client.utils;
 
 import ar.edu.itba.pod.models.Station;
 import ar.edu.itba.pod.models.Trip;
+import com.hazelcast.core.IMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,11 +11,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import com.hazelcast.core.IList;
 
 public class DataLoader {
     private final static Logger logger = LoggerFactory.getLogger(DataLoader.class);
@@ -47,31 +49,31 @@ public class DataLoader {
         return stations;
     }
 
-    public static void readBikes(final String path, final IList<Trip> tripsIList) {
-        List<Trip> trips = null;
-        int maxSize = 100000;
+    public static void readBikes(final String path, final IMap<Integer, Trip> tripsIMap, int maxSize) {
+        Map<Integer, Trip> trips = new HashMap<>();
+        AtomicInteger count = new AtomicInteger();
 
         final String bikesPath = path + BIKES_CSV;
 
         try (Stream<String> lines = Files.lines(Paths.get(bikesPath))) {
             trips = lines
-                    .skip(1)    // Salteamos los encabezados
+                    .skip(1)
                     .map(line -> line.split(";"))
-                    .map(data ->
-                            new Trip(
+                    .limit(maxSize)
+                    .collect(Collectors.toMap(
+                            data -> count.getAndIncrement(),
+                            data -> new Trip(
                                     LocalDateTime.parse(data[0], FORMATTER),
                                     LocalDateTime.parse(data[2], FORMATTER),
                                     Integer.parseInt(data[1]),
                                     Integer.parseInt(data[3]),
                                     Integer.parseInt(data[4])
                             )
-                    )
-                    .limit(maxSize)
-                    .collect(Collectors.toList());
+                    ));
         } catch (IOException e) {
             logger.error("Error while reading file: {}", e.getMessage());
         }
 
-        tripsIList.addAll(trips);
+        tripsIMap.putAll(trips);
     }
 }

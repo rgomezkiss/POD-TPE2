@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("deprecation")
-public class LongestTripMapper implements Mapper<String, Trip, Pair<Integer, Integer>, Pair<LocalDateTime, Integer>> {
+public class LongestTripMapper implements Mapper<Integer, Trip, Pair<Integer, Integer>, Pair<LocalDateTime, Integer>> {
     private final Map<Integer, Station> stationMap = new HashMap<>();
 
     public LongestTripMapper(List<Station> stations) {
@@ -22,7 +22,7 @@ public class LongestTripMapper implements Mapper<String, Trip, Pair<Integer, Int
     }
 
     @Override
-    public void map(String string, Trip trip, Context<Pair<Integer, Integer>, Pair<LocalDateTime, Integer>> context) {
+    public void map(Integer key, Trip trip, Context<Pair<Integer, Integer>, Pair<LocalDateTime, Integer>> context) {
         if (stationMap.containsKey(trip.getStartStation()) && stationMap.containsKey(trip.getEndStation())) {
             if (trip.getEndStation() != trip.getStartStation()) {
                 context.emit(new Pair<>(trip.getStartStation(), trip.getEndStation()), new Pair<>(trip.getStartDate(), trip.getTripLength()));

@@ -12,9 +12,8 @@ public class TopAverageDistanceStationsReducerFactory implements ReducerFactory<
     }
 
     private static class QueryReducer extends Reducer<Double, Double> {
-
-        private Double averageDistance;
-        private int count;
+        private Double averageDistance = 0.0;
+        private int count = 0;
 
         @Override
         public void beginReduce() {
