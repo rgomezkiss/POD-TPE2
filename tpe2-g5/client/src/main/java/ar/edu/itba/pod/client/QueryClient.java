@@ -37,6 +37,7 @@ public class QueryClient {
 
     public static void main(String[] args) {
         final QueryParams params = new QueryParser().parse(args);
+        System.out.println(params);
 
         setUpLogger(params.getOutPath() + "/time" + params.getQuery() + ".txt");
 

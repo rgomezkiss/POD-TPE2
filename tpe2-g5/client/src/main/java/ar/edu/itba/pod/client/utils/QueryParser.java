@@ -44,6 +44,7 @@ public class QueryParser implements Parser<QueryParams> {
 
             final String[] addressArray = cmd.getOptionValue(SERVER_ADDRESSES).split(";");
             final List<String> addresses = new ArrayList<>(Arrays.asList(addressArray));
+            System.out.println("Addresses" + addresses);
 
             final String inPath = cmd.getOptionValue(IN_PATH);
             final String outPath = cmd.getOptionValue(OUT_PATH);
@@ -69,7 +70,6 @@ public class QueryParser implements Parser<QueryParams> {
 
         } catch (ParseException e) {
             System.out.println("Error parsing command line arguments");
-//            logger.error("Error parsing command line arguments");
             return null;
         }
         return null;

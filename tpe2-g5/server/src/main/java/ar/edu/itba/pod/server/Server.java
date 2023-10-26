@@ -10,7 +10,7 @@ import java.util.Collections;
 public class Server {
     private static final Logger logger = LoggerFactory.getLogger(Server.class);
 //    private static final String IP = "192.168.1.*";
-    private static final String IP = "10.16.1.100";
+    private static final String IP = "10.16.1.*";
     private static final String HZ_CLIENT_NAME = "g5";
     private static final String HZ_CLIENT_PASS = "g5-pass";
 

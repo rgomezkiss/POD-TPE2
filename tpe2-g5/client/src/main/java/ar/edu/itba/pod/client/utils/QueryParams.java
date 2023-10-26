@@ -64,4 +64,17 @@ public class QueryParams {
     public int getQuery() {
         return query;
     }
+
+    @Override
+    public String toString() {
+        return "QueryParams{"
+                + "addresses=" + addresses + '\n'
+                + ", inPath=" + inPath + '\n'
+                + ", outPath=" + outPath + '\n'
+                + ", startDate=" + startDate  + '\n'
+                + ", endDate=" + endDate + '\n'
+                + ", N=" + N + '\n'
+                + ", query=" + query + '\n'
+                + '}';
+    }
 }
