@@ -1,30 +1,31 @@
 package ar.edu.itba.pod.reducers;
 
+import ar.edu.itba.pod.models.Pair;
 import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
 
 @SuppressWarnings("deprecation")
-public class TopAverageDistanceStationsReducerFactory implements ReducerFactory<Integer, Double, Double> {
+public class TopAverageDistanceStationsReducerFactory implements ReducerFactory<Integer, Pair<Integer, Double>, Double> {
 
     @Override
-    public Reducer<Double, Double> newReducer(Integer integer) {
+    public Reducer<Pair<Integer, Double>, Double> newReducer(Integer integer) {
         return new QueryReducer();
     }
 
-    private static class QueryReducer extends Reducer<Double, Double> {
-        private Double averageDistance = 0.0;
-        private int count = 0;
+    private static class QueryReducer extends Reducer<Pair<Integer, Double>, Double> {
+        private Double averageDistance;
+        private int count;
 
         @Override
         public void beginReduce() {
-            averageDistance = 0.0;
             count = 0;
+            averageDistance = 0.0;
         }
 
         @Override
-        public void reduce(Double distance) {
-            averageDistance += distance;
-            count++;
+        public void reduce(Pair<Integer, Double> pair) {
+            count += pair.getOne();
+            averageDistance += pair.getOther();
         }
 
         @Override

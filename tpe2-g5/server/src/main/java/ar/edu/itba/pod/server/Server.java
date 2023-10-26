@@ -17,9 +17,7 @@ public class Server {
         logger.info("Server Starting ...");
         Config config = new Config();
 
-        GroupConfig groupConfig = new GroupConfig()
-                .setName(HZ_CLIENT_NAME)
-                .setPassword(HZ_CLIENT_PASS);
+        GroupConfig groupConfig = new GroupConfig().setName(HZ_CLIENT_NAME).setPassword(HZ_CLIENT_PASS);
         config.setGroupConfig(groupConfig);
 
         MulticastConfig multicastConfig = new MulticastConfig();
@@ -29,11 +27,6 @@ public class Server {
         config.setNetworkConfig(networkConfig);
 
         Hazelcast.newHazelcastInstance(config);
-
-//        ManagementCenterConfig managementCenterConfig = new ManagementCenterConfig()
-//                .setUrl("http://localhost:8080/mancenter/")
-//                .setEnabled(true);
-//        config.setManagementCenterConfig(managementCenterConfig);
 
         logger.info("Server started");
     }

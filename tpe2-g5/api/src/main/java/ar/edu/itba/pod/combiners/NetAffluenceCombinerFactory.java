@@ -4,58 +4,37 @@ import ar.edu.itba.pod.models.Pair;
 import com.hazelcast.mapreduce.Combiner;
 import com.hazelcast.mapreduce.CombinerFactory;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @SuppressWarnings("deprecation")
-public class NetAffluenceCombinerFactory implements CombinerFactory<String, Pair<Long, LocalDateTime>, List<Long>> {
+public class NetAffluenceCombinerFactory implements CombinerFactory<String, Pair<Long, LocalDateTime>, Pair<Long, LocalDateTime>> {
 
     @Override
-    public Combiner<Pair<Long, LocalDateTime>, List<Long>> newCombiner(String s) {
+    public Combiner<Pair<Long, LocalDateTime>, Pair<Long, LocalDateTime>> newCombiner(String key) {
         return new NetAffluenceCombiner();
     }
 
-    private static class NetAffluenceCombiner extends Combiner<Pair<Long, LocalDateTime>, List<Long>> {
-        private List<Long> netAffluenceList;
-        private Map<LocalDate, Long> affluenceMapPerDay;
+    private static class NetAffluenceCombiner extends Combiner<Pair<Long, LocalDateTime>, Pair<Long, LocalDateTime>> {
+        private Pair<Long, LocalDateTime> auxNetAffluence = null;
 
         @Override
-        public void combine(Pair<Long, LocalDateTime> pair) {
-            LocalDate date = pair.getOther().toLocalDate();
-            affluenceMapPerDay.putIfAbsent(date, 0L);
-            affluenceMapPerDay.merge(date, pair.getOne(), Long::sum);
+        public void combine(Pair<Long, LocalDateTime> value) {
+            if (auxNetAffluence == null){
+                auxNetAffluence = new Pair<>(value.getOne(), value.getOther());
+            } else {
+                auxNetAffluence.setOne(auxNetAffluence.getOne() + value.getOne());
+            }
         }
 
         @Override
-        public List<Long> finalizeChunk() {
-            long positiveAffluence = 0;
-            long neutralAffluence = 0;
-            long negativeAffluence = 0;
-
-            for (Long affluence : affluenceMapPerDay.values()) {
-                if (affluence > 0) {
-                    positiveAffluence++;
-                } else if (affluence < 0) {
-                    negativeAffluence++;
-                } else {
-                    neutralAffluence++;
-                }
-            }
-
-            netAffluenceList.add(positiveAffluence);
-            netAffluenceList.add(neutralAffluence);
-            netAffluenceList.add(negativeAffluence);
-            return netAffluenceList;
+        public Pair<Long, LocalDateTime> finalizeChunk() {
+            return auxNetAffluence;
         }
 
         @Override
         public void reset() {
-            netAffluenceList = new ArrayList<>();
-            affluenceMapPerDay = new HashMap<>();
+            auxNetAffluence = null;
         }
     }
 }
+

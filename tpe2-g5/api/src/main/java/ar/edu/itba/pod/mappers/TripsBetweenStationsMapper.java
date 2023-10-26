@@ -5,11 +5,8 @@ import ar.edu.itba.pod.models.Station;
 import ar.edu.itba.pod.models.Trip;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.HazelcastInstanceAware;
 import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;

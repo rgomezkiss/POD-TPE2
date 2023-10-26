@@ -18,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -33,15 +32,13 @@ public class QueryClient {
     private static final String QUERY2 = "query2-g5";
     private static final String QUERY3 = "query3-g5";
     private static final String QUERY4 = "query4-g5";
-
     private static final int MAX_SIZE = 100000;
-
-    private static final boolean WITH_COMBINER = false;
+    private static final boolean WITH_COMBINER = true;
 
     public static void main(String[] args) {
         final QueryParams params = new QueryParser().parse(args);
 
-        setUpLogger(params.getOutPath() + "time" + params.getQuery() + ".txt");
+        setUpLogger(params.getOutPath() + "/time" + params.getQuery() + ".txt");
 
         final HazelcastInstance hazelcastInstance = getHazelClientInstance(params.getServerAddresses());
 
@@ -143,7 +140,7 @@ public class QueryClient {
                     if (WITH_COMBINER) {
                         result = job
                                 .mapper(new NetAffluenceMapper(stationIMap, params.getStartDate(), params.getEndDate()))
-//                                .combiner(new NetAffluenceCombinerFactory())
+                                .combiner(new NetAffluenceCombinerFactory())
                                 .reducer(new NetAffluenceReducerFactory())
                                 .submit(new NetAffluenceCollator(stationIMap, params.getStartDate(), params.getEndDate()))
                                 .get();
@@ -163,7 +160,6 @@ public class QueryClient {
             //TODO: start adding validations
             logger.error(e.getMessage());
             e.printStackTrace();
-            logger.info("Error");
         } finally {
             logger.info("Fin del trabajo map/reduce");
             tripIMap.clear();

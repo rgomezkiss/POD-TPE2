@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 @SuppressWarnings("deprecation")
 public class LongestTripCollator implements Collator<
         Map.Entry<Pair<Integer, Integer>, Pair<LocalDateTime, Integer>>,

@@ -1,11 +1,9 @@
 package ar.edu.itba.pod.reducers;
 
-
 import ar.edu.itba.pod.models.Pair;
 import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
 
-import java.net.Inet4Address;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;

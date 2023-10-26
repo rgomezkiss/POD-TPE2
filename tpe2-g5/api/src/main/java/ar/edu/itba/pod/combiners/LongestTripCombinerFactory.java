@@ -7,7 +7,8 @@ import com.hazelcast.mapreduce.CombinerFactory;
 import java.time.LocalDateTime;
 
 @SuppressWarnings("deprecation")
-public class LongestTripCombinerFactory implements CombinerFactory<Pair<Integer, Integer>, Pair<LocalDateTime, Integer>, Pair<LocalDateTime, Integer>> {
+public class LongestTripCombinerFactory implements CombinerFactory<
+        Pair<Integer, Integer>, Pair<LocalDateTime, Integer>, Pair<LocalDateTime, Integer>> {
 
     @Override
     public Combiner<Pair<LocalDateTime, Integer>, Pair<LocalDateTime, Integer>> newCombiner(Pair<Integer, Integer> integerIntegerPair) {

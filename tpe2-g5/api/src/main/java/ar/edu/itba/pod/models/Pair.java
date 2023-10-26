@@ -25,6 +25,12 @@ public class Pair<T, V> implements DataSerializable {
     public V getOther() {
         return value2;
     }
+    public void setOne(T one) {
+        this.value1 = one;
+    }
+    public void setOther(V other){
+        this.value2 = other;
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -9,7 +9,6 @@ import com.hazelcast.mapreduce.Mapper;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("deprecation")

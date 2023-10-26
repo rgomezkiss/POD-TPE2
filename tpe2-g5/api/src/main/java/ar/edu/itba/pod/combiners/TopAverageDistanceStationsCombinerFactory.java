@@ -1,29 +1,30 @@
 package ar.edu.itba.pod.combiners;
 
+import ar.edu.itba.pod.models.Pair;
 import com.hazelcast.mapreduce.Combiner;
 import com.hazelcast.mapreduce.CombinerFactory;
 
 @SuppressWarnings("deprecation")
-public class TopAverageDistanceStationsCombinerFactory implements CombinerFactory<Integer, Double, Double> {
+public class TopAverageDistanceStationsCombinerFactory implements CombinerFactory<Integer, Pair<Integer, Double>, Pair<Integer, Double>> {
 
     @Override
-    public Combiner<Double, Double> newCombiner(Integer key) {
+    public Combiner<Pair<Integer, Double>, Pair<Integer, Double>> newCombiner(Integer key) {
         return new DistanceCombiner();
     }
 
-    private static class DistanceCombiner extends Combiner<Double, Double> {
-        private Double averageDistance = 0.0;
-        private int count = 0;
+    private static class DistanceCombiner extends Combiner<Pair<Integer, Double>, Pair<Integer, Double>> {
+        private Double averageDistance;
+        private int count;
 
         @Override
-        public void combine(Double distance) {
-            averageDistance += distance;
-            count++;
+        public void combine(Pair<Integer, Double> pair) {
+            count += pair.getOne();
+            averageDistance += pair.getOther();
         }
 
         @Override
-        public Double finalizeChunk() {
-            return averageDistance / count;
+        public Pair<Integer, Double> finalizeChunk() {
+            return new Pair<>(count, averageDistance);
         }
 
         @Override
