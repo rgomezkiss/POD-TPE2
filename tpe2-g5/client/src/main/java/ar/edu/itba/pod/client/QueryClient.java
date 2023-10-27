@@ -33,7 +33,7 @@ public class QueryClient {
     private static final String QUERY3 = "query3-g5";
     private static final String QUERY4 = "query4-g5";
     private static final int MAX_SIZE = 200000;
-    private static final boolean WITH_COMBINER = false;
+    private static final boolean WITH_COMBINER = true;
 
     public static void main(String[] args) {
         final QueryParams params = new QueryParser().parse(args);

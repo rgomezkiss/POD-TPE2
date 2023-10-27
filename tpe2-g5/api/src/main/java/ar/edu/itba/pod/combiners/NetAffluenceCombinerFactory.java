@@ -7,33 +7,30 @@ import com.hazelcast.mapreduce.CombinerFactory;
 import java.time.LocalDateTime;
 
 @SuppressWarnings("deprecation")
-public class NetAffluenceCombinerFactory implements CombinerFactory<String, Pair<Long, LocalDateTime>, Pair<Long, LocalDateTime>> {
+public class NetAffluenceCombinerFactory implements CombinerFactory<Pair<Integer, LocalDateTime>, Long, Long> {
 
     @Override
-    public Combiner<Pair<Long, LocalDateTime>, Pair<Long, LocalDateTime>> newCombiner(String key) {
+    public Combiner<Long, Long> newCombiner(Pair<Integer, LocalDateTime> key) {
         return new NetAffluenceCombiner();
     }
 
-    private static class NetAffluenceCombiner extends Combiner<Pair<Long, LocalDateTime>, Pair<Long, LocalDateTime>> {
-        private Pair<Long, LocalDateTime> auxNetAffluence = null;
+    private static class NetAffluenceCombiner extends Combiner<Long, Long> {
+
+        private Long auxNetAffluence;
 
         @Override
-        public void combine(Pair<Long, LocalDateTime> value) {
-            if (auxNetAffluence == null){
-                auxNetAffluence = new Pair<>(value.getOne(), value.getOther());
-            } else {
-                auxNetAffluence.setOne(auxNetAffluence.getOne() + value.getOne());
-            }
+        public void combine(Long value) {
+            auxNetAffluence += value;
         }
 
         @Override
-        public Pair<Long, LocalDateTime> finalizeChunk() {
+        public Long finalizeChunk() {
             return auxNetAffluence;
         }
 
         @Override
         public void reset() {
-            auxNetAffluence = null;
+            auxNetAffluence = 0L;
         }
     }
 }

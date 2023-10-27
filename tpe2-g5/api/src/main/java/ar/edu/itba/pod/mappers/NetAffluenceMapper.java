@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("deprecation")
-public class NetAffluenceMapper implements Mapper<Integer, Trip, String, Pair<Long, LocalDateTime>> {
+public class NetAffluenceMapper implements Mapper<Integer, Trip, Pair<Integer, LocalDateTime>, Long> {
     private final Map<Integer, Station> stationMap = new HashMap<>();
     private final LocalDate startDate;
     private final LocalDate endDate;
@@ -25,13 +25,11 @@ public class NetAffluenceMapper implements Mapper<Integer, Trip, String, Pair<Lo
     }
 
     @Override
-    public void map(Integer key, Trip trip, Context<String, Pair<Long, LocalDateTime>> context) {
+    public void map(Integer key, Trip trip, Context<Pair<Integer, LocalDateTime>, Long> context) {
         if (stationMap.containsKey(trip.getStartStation()) && stationMap.containsKey(trip.getEndStation())) {
             if (trip.getStartDate().isAfter(startDate.atStartOfDay()) && trip.getEndDate().isBefore(endDate.atTime(23, 59))) {
-                final Station startStation = stationMap.get(trip.getStartStation());
-                final Station endStation = stationMap.get(trip.getEndStation());
-                context.emit(startStation.getName(), new Pair<>(-1L, trip.getStartDate()));
-                context.emit(endStation.getName(), new Pair<>(1L, trip.getEndDate()));
+                context.emit(new Pair<>(trip.getStartStation(), trip.getStartDate()), -1L);
+                context.emit(new Pair<>(trip.getEndStation(), trip.getEndDate()), 1L);
             }
         }
     }
