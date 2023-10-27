@@ -4,13 +4,14 @@ import ar.edu.itba.pod.models.Pair;
 import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @SuppressWarnings("deprecation")
-public class NetAffluenceReducerFactory implements ReducerFactory<Pair<Integer, LocalDateTime>, Long, Long> {
+public class NetAffluenceReducerFactory implements ReducerFactory<Pair<Integer, LocalDate>, Long, Long> {
 
     @Override
-    public Reducer<Long, Long> newReducer(Pair<Integer, LocalDateTime> integerLocalDateTimePair) {
+    public Reducer<Long, Long> newReducer(Pair<Integer, LocalDate> integerLocalDateTimePair) {
         return new QueryReducer();
     }
 

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("deprecation")
-public class NetAffluenceCollator implements Collator<Map.Entry<Pair<Integer, LocalDateTime>, Long>, List<Map.Entry<String, List<Long>>>> {
+public class NetAffluenceCollator implements Collator<Map.Entry<Integer, List<Long>>, List<Map.Entry<String, List<Long>>>> {
 
     private final Map<Integer, Station> stationMap = new HashMap<>();
     private final LocalDate startDate;
@@ -27,30 +27,20 @@ public class NetAffluenceCollator implements Collator<Map.Entry<Pair<Integer, Lo
     }
 
     @Override
-    public List<Map.Entry<String, List<Long>>> collate(Iterable<Map.Entry<Pair<Integer, LocalDateTime>, Long>> iterable) {
+    public List<Map.Entry<String, List<Long>>> collate(Iterable<Map.Entry<Integer, List<Long>>> iterable) {
         final Map<String, List<Long>> map = new HashMap<>();
-
-        final Map<Integer, Pair<Long, LocalDateTime>> netAffluencePerDay = new HashMap<>();
 
         final long totalDays =  ChronoUnit.DAYS.between(startDate, endDate.plusDays(1));
 
-        for (Map.Entry<Pair<Integer, LocalDateTime>, Long> entry : iterable) {
-            Pair<Integer, LocalDateTime> key = entry.getKey();
-            Long value = entry.getValue();
-
-            netAffluencePerDay.putIfAbsent(key.getOne(), new Pair<>(value, key.getOther()));
-
-
-
-
-            final Station station = stationMap.get(entry.getKey());
+        for (Map.Entry<Integer, List<Long>> entry : iterable) {
+            final String stationName = stationMap.get(entry.getKey()).getName();
             final List<Long> affluencesList = entry.getValue();
             final long totalDayPerStation = affluencesList.get(0) + affluencesList.get(1) + affluencesList.get(2);
             if (totalDayPerStation < totalDays) {
                 long missedDays = totalDays - totalDayPerStation;
                 affluencesList.set(1, affluencesList.get(1) + missedDays);
             }
-            map.put(station.getName(), affluencesList);
+            map.put(stationName, affluencesList);
         }
 
         final List<Map.Entry<String, List<Long>>> sortedList = new ArrayList<>(map.entrySet());
@@ -62,9 +52,5 @@ public class NetAffluenceCollator implements Collator<Map.Entry<Pair<Integer, Lo
             return cmp;
         });
 
-        return sortedList;
-
-        return null;
-    }
-
+        return sortedList;        }
 }

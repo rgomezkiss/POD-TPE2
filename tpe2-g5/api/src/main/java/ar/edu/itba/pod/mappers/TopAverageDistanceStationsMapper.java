@@ -19,7 +19,6 @@ public class TopAverageDistanceStationsMapper implements Mapper<Integer, Trip, I
         stationMap.putAll(stations);
     }
 
-
     @Override
     public void map(Integer key, Trip trip, Context<Integer, Pair<Integer, Double>> context) {
         if (stationMap.containsKey(trip.getStartStation()) && stationMap.containsKey(trip.getEndStation())) {

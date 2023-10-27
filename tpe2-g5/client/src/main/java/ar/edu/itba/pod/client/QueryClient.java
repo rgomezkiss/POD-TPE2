@@ -17,6 +17,7 @@ import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -31,9 +32,10 @@ public class QueryClient {
     private static final String QUERY1 = "query1-g5";
     private static final String QUERY2 = "query2-g5";
     private static final String QUERY3 = "query3-g5";
-    private static final String QUERY4 = "query4-g5";
+    private static final String QUERY4_1 = "query4-g5-1";
+    private static final String QUERY4_2 = "query4-g5-2";
     private static final int MAX_SIZE = 200000;
-    private static final boolean WITH_COMBINER = true;
+    private static final boolean WITH_COMBINER = false;
 
     public static void main(String[] args) {
         final QueryParams params = new QueryParser().parse(args);
@@ -139,26 +141,46 @@ public class QueryClient {
                 }
 
                 case 4 -> {
-                    final KeyValueSource<Integer, Trip> keyValueSource = KeyValueSource.fromMap(tripIMap);
-                    final Job<Integer, Trip> job = hazelcastInstance.getJobTracker(QUERY4).newJob(keyValueSource);
+                    final KeyValueSource<Integer, Trip> firstKeyValueSource = KeyValueSource.fromMap(tripIMap);
+                    final Job<Integer, Trip> firstJob = hazelcastInstance.getJobTracker(QUERY4_1).newJob(firstKeyValueSource);
 
+                    final KeyValueSource<Pair<Integer, LocalDate>, Long> secondKeyValueSource;
+                    final Job<Pair<Integer, LocalDate>, Long> secondJob;
+
+                    IMap<Pair<Integer, LocalDate>, Long> temporaryIMap = hazelcastInstance.getMap("g5-temp-map");
+                    temporaryIMap.clear();
                     List<Map.Entry<String, List<Long>>> result;
+
                     if (WITH_COMBINER) {
-                        result = job
+                        temporaryIMap.putAll(firstJob
                                 .mapper(new NetAffluenceMapper(stationIMap, params.getStartDate(), params.getEndDate()))
                                 .combiner(new NetAffluenceCombinerFactory())
-                                .reducer(new NetAffluenceReducerFactory())
+                                .reducer(new NetAffluenceReducerFactory()).submit().get());
+
+                        secondKeyValueSource = KeyValueSource.fromMap(temporaryIMap);
+                        secondJob = hazelcastInstance.getJobTracker(QUERY4_2).newJob(secondKeyValueSource);
+
+                        result = secondJob
+                                .mapper(new NetAffluenceListMapper())
+                                .reducer(new NetAffluenceListReducerFactory())
                                 .submit(new NetAffluenceCollator(stationIMap, params.getStartDate(), params.getEndDate()))
                                 .get();
                     } else {
-                        result = job
+                        temporaryIMap.putAll(firstJob
                                 .mapper(new NetAffluenceMapper(stationIMap, params.getStartDate(), params.getEndDate()))
-                                .reducer(new NetAffluenceReducerFactory())
+                                .reducer(new NetAffluenceReducerFactory()).submit().get());
+
+                        secondKeyValueSource = KeyValueSource.fromMap(temporaryIMap);
+                        secondJob = hazelcastInstance.getJobTracker(QUERY4_2).newJob(secondKeyValueSource);
+
+                        result = secondJob
+                                .mapper(new NetAffluenceListMapper())
+                                .reducer(new NetAffluenceListReducerFactory())
                                 .submit(new NetAffluenceCollator(stationIMap, params.getStartDate(), params.getEndDate()))
                                 .get();
                     }
-
                     logger.info("Fin del trabajo map/reduce");
+                    temporaryIMap.clear();
 
                     ResultWriter<String, List<Long>> query4Writer = new ResultWriter<>();
                     query4Writer.writeResult(params.getOutPath(), result, new Query4Writer());
