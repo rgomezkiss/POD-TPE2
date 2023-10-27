@@ -43,6 +43,6 @@ public class TopAverageDistanceStationsCollator implements Collator<Map.Entry<In
             return cmp;
         });
 
-        return sortedList.subList(0, this.N - 1);
+        return sortedList.subList(0, this.N);
     }
 }

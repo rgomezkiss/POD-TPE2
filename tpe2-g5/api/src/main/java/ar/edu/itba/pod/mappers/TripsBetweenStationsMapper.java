@@ -21,14 +21,10 @@ public class TripsBetweenStationsMapper implements Mapper<Integer, Trip, Pair<In
 
     @Override
     public void map(Integer key, Trip trip, Context<Pair<Integer, Integer>, Integer> context) {
-        if (iMapContains(trip.getStartStation()) && iMapContains(trip.getEndStation())) {
+        if (stationMap.containsKey(trip.getStartStation()) && stationMap.containsKey(trip.getEndStation())) {
             if (trip.getEndStation() != trip.getStartStation()) {
                 context.emit(new Pair<>(trip.getStartStation(), trip.getEndStation()), 1);
             }
         }
-    }
-
-    private boolean iMapContains (Integer key) {
-        return stationMap.containsKey(key);
     }
 }

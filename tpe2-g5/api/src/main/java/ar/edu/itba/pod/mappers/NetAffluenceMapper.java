@@ -24,7 +24,6 @@ public class NetAffluenceMapper implements Mapper<Integer, Trip, String, Pair<Lo
         this.endDate = endDate;
     }
 
-    //TODO: check inclusión de endDate hasta 23:59
     @Override
     public void map(Integer key, Trip trip, Context<String, Pair<Long, LocalDateTime>> context) {
         if (stationMap.containsKey(trip.getStartStation()) && stationMap.containsKey(trip.getEndStation())) {

@@ -19,7 +19,6 @@ public class LongestTripMapper implements Mapper<Integer, Trip, Pair<Integer, In
         stationMap.putAll(stations);
     }
 
-
     @Override
     public void map(Integer key, Trip trip, Context<Pair<Integer, Integer>, Pair<LocalDateTime, Integer>> context) {
         if (stationMap.containsKey(trip.getStartStation()) && stationMap.containsKey(trip.getEndStation())) {

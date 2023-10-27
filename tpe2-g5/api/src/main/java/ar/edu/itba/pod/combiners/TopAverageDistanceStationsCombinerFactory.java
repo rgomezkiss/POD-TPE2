@@ -13,8 +13,8 @@ public class TopAverageDistanceStationsCombinerFactory implements CombinerFactor
     }
 
     private static class DistanceCombiner extends Combiner<Pair<Integer, Double>, Pair<Integer, Double>> {
-        private Double averageDistance;
-        private int count;
+        private Double averageDistance = 0.0;
+        private int count = 0;
 
         @Override
         public void combine(Pair<Integer, Double> pair) {

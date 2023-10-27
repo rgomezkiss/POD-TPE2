@@ -9,8 +9,8 @@ import java.util.Collections;
 
 public class Server {
     private static final Logger logger = LoggerFactory.getLogger(Server.class);
-//    private static final String IP = "192.168.1.*";
-    private static final String IP = "10.16.1.*";
+    private static final String IP = "192.168.1.*";
+//    private static final String IP = "10.16.1.*";
     private static final String HZ_CLIENT_NAME = "g5";
     private static final String HZ_CLIENT_PASS = "g5-pass";
 
@@ -23,6 +23,7 @@ public class Server {
 
         MulticastConfig multicastConfig = new MulticastConfig();
         JoinConfig joinConfig = new JoinConfig().setMulticastConfig(multicastConfig);
+//        InterfacesConfig interfacesConfig = new InterfacesConfig().setInterfaces(Collections.singletonList(IP)).setEnabled(false);
         InterfacesConfig interfacesConfig = new InterfacesConfig().setInterfaces(Collections.singletonList(IP)).setEnabled(true);
 
         NetworkConfig networkConfig = new NetworkConfig().setInterfaces(interfacesConfig).setJoin(joinConfig);
