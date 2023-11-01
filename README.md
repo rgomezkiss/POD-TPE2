@@ -27,7 +27,17 @@ tar -xzvf <nombre-del-archivo>.tar.gz
 
 Tras haber realizado lo anterior, podremos ejecutar el siguiente servicio y los clientes. Asegurarse de otorgar permisos de ejecución a los ejecutables.
 
-### Queries
+### Servicio
+Para ejecutar el servicio se debe correr:
+
+```
+/run-server.sh
+```
+
+Si se ejecuta este comando en la misma terminal, se levantaran diferentes nodos. También se pueden realizar en Pampero.
+Hay que tener en cuenta que se debe modificar en el código la IP "base" que escucha el servidor.
+
+### Cliente
 
 Todas las queries siempre tendrán en común los siguientes argumentos:
 
